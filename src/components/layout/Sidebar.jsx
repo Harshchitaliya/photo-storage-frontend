@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useAuth } from "../../context/logincheck";
+import { useAuth } from "../../context/auth/AuthContext";
 const navagate = [
   {
     title: "Home",

@@ -1,16 +1,18 @@
-import "./App.css";
-// import Sidebar from "./components/Navbar/Sidebar";
-import { AuthProvider } from "./context/logincheck";
-import Login from "./components/login";
-
+import "./assets/styles/App.css";
+import { AuthProvider } from "./context/auth/AuthContext.jsx";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes";
+import Layout from './components/layout/Layout';
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <AuthProvider>
-        
+        <Layout>
+          <AppRoutes />
+        </Layout>
       </AuthProvider>
-    </>
+    </BrowserRouter>
   );
 }
 
