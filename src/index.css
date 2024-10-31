@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Backgrounds */
+  --bg-color: #121212; /* Main background color */
+  --secondary-bg-color: #1e1e1e; /* Secondary background color */
+  --container-bg-color: #1f1f1f; /* Container background color */
+
+  /* Text colors */
+  --text-color: #ffffff; /* Main text color */
+  --secondary-text-color: #b0b0b0; /* Secondary text color */
+  --text-hover-color: #e0e0e0; /* Text hover color */
+  --text-black:#121212;
+
+  /* Button colors */
+  --button-bg-color: rgb(57, 57, 57); /* Button background color */
+  --button-hover-bg-color: #121212; /* Button hover background color */
+  --button-text-color: #ffffff; /* Button text color */
+
+  /* Link colors */
+  --link-color: #1e90ff; /* Link color */
+  --link-hover-color: #63a4ff; /* Link hover color */
+
+  /* Border colors */
+  --border-color: #333333; /* Border color */
+
+  /* Status colors */
+  --error-bg-color: #f44336; /* Error background color */
+  --error-text-color: #ffffff; /* Error text color */
+  --success-bg-color: #4caf50; /* Success background color */
+  --success-text-color: #ffffff; /* Success text color */
+  --warning-bg-color: #ff9800; /* Warning background color */
+  --warning-text-color: #ffffff; /* Warning text color */
+ 
+  /* Notification colors */
+  --info-bg-color: #2196f3; /* Info background color */
+  --info-text-color: #ffffff; /* Info text color */
+}
