@@ -5,8 +5,16 @@ import { useAuth } from '../../context/auth/AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
 
 const Gallery = () => {
-    const [photos, setPhotos] = useState([]);
+    
+    
+    const [photo, setPhoto] = useState([]);
     const { currentUseruid } = useAuth();
+    useEffect(() => {
+        if (currentUseruid) {
+            handleShowPhoto();
+        }
+    }, [currentUseruid]);
+
 
     const handleShowPhoto = useCallback(async () => {
         if (!currentUseruid) {
@@ -51,41 +59,61 @@ const Gallery = () => {
         }
     }, [currentUseruid]);
 
-    useEffect(() => {
-        if (currentUseruid) {
-            handleShowPhoto();
-        }
-    }, [currentUseruid, handleShowPhoto]);
+
+
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Product Gallery</h1>
-
+        <div className="">
+            
             <div className="grid grid-cols-3 gap-4 mt-8">
-                {photos.map((photo, index) => (
-                    <div 
-                        key={index} 
-                        className="aspect-square group relative overflow-hidden rounded-lg shadow-md"
-                    >
-                        <img 
-                            src={photo.downloadUrl} 
-                            alt={photo.title || `Photo ${index}`}
-                            className="w-full h-full object-cover transition-transform duration-200 
-                                     group-hover:scale-110"
-                            loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 
-                                      transition-opacity duration-200">
-                            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                                <p className="font-bold">{photo.title}</p>
-                                <p>SKU: {photo.sku}</p>
-                                <p>Price: ${photo.price}</p>
-                                <p>modify Date: {photo.date}</p>
-                                {photo.isFavorite && <span>⭐ Favorite</span>}
-                                {photo.isDelete && <span>🗑️ Marked for deletion</span>}
-                            </div>
+                {photo.map((photoUrl, index) => (
+                    <div className="max-w-sm bg-[#1e1e1e] rounded-lg p-4 text-white" key={index}>
+                    {/* Header with icon and filename */}
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                        <div className="bg-[#90c397] w-6 h-6 flex items-center justify-center rounded">
+                            <span className="text-black text-sm font-medium">X</span>
                         </div>
+                        <span className="text-white">7075831.xlsx</span>
+                        </div>
+                        <button className="text-gray-400 hover:text-white">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                        </svg>
+                        </button>
                     </div>
+        
+                    {/* Preview area */}
+                    <div className="bg-white rounded-lg mb-4 h-48">
+                        {/* You can add a preview image or placeholder here */}
+                    </div>
+        
+                    {/* Footer with user info and timestamp */}
+                    <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full overflow-hidden">
+                        <img 
+                            src="/path-to-user-avatar.jpg" 
+                            alt="User avatar"
+                            className="w-full h-full object-cover"
+                        />
+                        </div>
+                        <span className="text-gray-400 text-sm">You opened • Oct 22, 2024</span>
+                    </div>
+                    </div>
+                    // <div
+                    //     key={index}
+                    //     className="aspect-square group relative overflow-hidden rounded-lg shadow-md"
+                    // >
+                    //     <img
+                    //         src={photoUrl}
+                    //         alt={`Photo ${index}`}
+                    //         className="w-full h-full object-cover transition-transform duration-200 
+                    //                  group-hover:scale-110"
+                    //         loading="lazy"
+                    //     />
+                    //     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200" />
+                    // </div>
+                    
                 ))}
             </div>
         </div>
