@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useAuth } from "../../context/auth/AuthContext";
+import { Link } from "react-router-dom";
 const navagate = [
   {
     title: "Home",
@@ -64,7 +65,7 @@ const Sidebar = () => {
     setIsOpen(false);
   };
   const logout = () => {
-    setActiveLink("Logout");
+    setActiveLink("logout");
     setIsOpen(false);
   };
 
@@ -114,7 +115,7 @@ const Sidebar = () => {
                         activeLink === item.title ? "bg-button-hover" : ""
                     } ${item.useAuth ? "" : "text-xl"}`}
                     >
-                    {item.title}
+                    <Link to={item.path}>{item.title}</Link>
                     </li>
                 ))}
                 </ul>
@@ -129,14 +130,17 @@ const Sidebar = () => {
                                 activeLink === item.title ? "bg-button-hover" : ""
                             }`}
                         >
-                            {item.title}
+                            <Link to={item.path}>{item.title}</Link>
                         </li>
                     )}
                     <li
-                        onClick={ () => {currentUseruid ? logout() : navigate({title:"Login",path:"/login"})} }
-                        className="py-2 px-2 rounded hover:bg-button-hover"
+                        onClick={ () => {currentUseruid ? logout() : navigate(({title:"Login",path:"/login"}))} }
+                        className={`py-2 px-2 rounded hover:bg-button-hover ${
+                          activeLink === "Logout" || activeLink === "Login" ? "bg-button-hover" : ""
+                      }`}
                     >
-                        {currentUseruid ? "Logout" : "Login"}
+                       
+                        <Link to={currentUseruid ? "/logout" : "/login"} > {currentUseruid ? "Logout" : "Login"} </Link>
                     </li>  
                 </ul>
             </div>
