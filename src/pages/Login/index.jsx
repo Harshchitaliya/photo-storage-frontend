@@ -55,7 +55,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg text-text">
+    <div className="flex items-center justify-center h-full bg-bg text-text">
       <div className="bg-secondary p-6 rounded-lg shadow-md w-96">
         <div className="logo mb-4">
           <img src="https://mindrontech.in/wp-content/uploads/2023/02/cropped-mindron-logo-1.png" alt="mindron" className="mx-auto" />

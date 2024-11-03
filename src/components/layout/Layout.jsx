@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="app-layout">      
-      <div className="content-wrapper">
-        <Sidebar />
+    <>
+      <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} />
+      <div className={`p-4 h-screen  ${isOpen ? "sm:ml-64" : "sm:ml-16"}`}>
         {children}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import Logout from '../pages/logout';
+import Logout from '../pages/Logout/index.jsx';
 import { useAuth } from '../context/auth/AuthContext.jsx';
 import Gallery from '../pages/Gallery';
 function AppRoutes() {
