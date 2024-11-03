@@ -3,7 +3,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Logout from '../pages/Logout/index.jsx';
 import { useAuth } from '../context/auth/AuthContext.jsx';
-
+import Gallery from '../pages/Gallery';
 function AppRoutes() {
   const { user } = useAuth();
 
@@ -12,6 +12,7 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/logout" element={<Logout />} />
+      <Route path="/gallery" element={<Gallery />} />
     </Routes>
   );
 }
