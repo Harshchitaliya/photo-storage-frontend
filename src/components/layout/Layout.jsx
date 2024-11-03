@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <Sidebar setIsOpen={setIsOpen} isOpen={isOpen} />
-      <div className={`p-4 h-screen  ${isOpen ? "sm:ml-64" : "sm:ml-16"}`}>
+      <div className={`p-4 h-screen overflow-auto	${isOpen ? "sm:ml-64" : "sm:ml-16"}`}>
         {children}
       </div>
     </>

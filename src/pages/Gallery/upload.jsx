@@ -34,9 +34,19 @@ const Gallery = () => {
 
     const handleFileChange = useCallback((e) => {
         const selectedFiles = e.type === "drop" ? Array.from(e.dataTransfer.files) : Array.from(e.target.files);
-        const imageFiles = selectedFiles.filter(file => file.type.startsWith('image/'));
-        if (imageFiles.length > 0) {
-            setFiles((prevFiles) => [...prevFiles, ...imageFiles]);
+        const allowedFiles = selectedFiles.filter(file => {
+            const fileType = file.type.toLowerCase();
+            return fileType.startsWith('image/') || 
+                   fileType.startsWith('video/mp4') ||
+                   fileType.startsWith('video/quicktime') || // For .mov files
+                   fileType.startsWith('video/x-msvideo') || // For .avi files
+                   fileType.startsWith('video/webm') || 
+                   fileType.startsWith('video/MOV');
+
+        });
+        
+        if (allowedFiles.length > 0) {
+            setFiles(prevFiles => [...prevFiles, ...allowedFiles]);
         }
     }, []);
 
@@ -200,7 +210,7 @@ const Gallery = () => {
                         type="file"
                         onChange={handleFileChange}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        accept="image/*"
+                        accept="*/*"
                     />
                     <div className="space-y-2">
                         <svg 
