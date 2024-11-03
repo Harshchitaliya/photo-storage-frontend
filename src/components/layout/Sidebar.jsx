@@ -135,7 +135,7 @@ const Sidebar = (props) => {
           </ul>
           <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
             <ul className="space-y-2">
-              {[...footerNavagate, (!currentUseruid ? { ...logoutNavagate, onClick: logout } : [])].map((item, index) => renderLink(item, index))}
+              {[...footerNavagate, ...(!currentUseruid ? [{ ...logoutNavagate, onClick: logout }] : [])].map((item, index) => renderLink(item, index))}
             </ul>
           </div>
         </div>
