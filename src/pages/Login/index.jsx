@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../connection/connection';
-// import { useNavigate } from 'react-router-dom';
+import {auth} from '../../context/auth/connection/connection';
+import {  useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const Login = () => {
   const [loginError, setLoginError] = useState('');
   const [resetError, setResetError] = useState('');
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   
 
@@ -23,7 +23,7 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log('Login successful', user.uid);
-      // navigate('/Product');
+      navigate('/');
     } catch (error) {
       const errorMessage =
         error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found'
