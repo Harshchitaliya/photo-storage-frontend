@@ -5,14 +5,16 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { isVideo } from "../../utils";
 import Card from "./Card";
-import { DeleteIcon } from "../../components/icons";
+import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
+import DrawerComponent from "./drawer";
 
 const Gallery = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { currentUseruid } = useAuth();
   useEffect(() => {
     handleShowPhoto();
@@ -171,6 +173,7 @@ const Gallery = () => {
             handleDownload={handleDownload}
             handleDelete={handleDelete}
             handleShare={handleShare}
+            setDrawerOpen={setDrawerOpen}
           />
         ))}
       </div>
@@ -187,12 +190,13 @@ const Gallery = () => {
                 <DeleteIcon />
               </Button>
               <Button onClick={() => handleShare(selectedItems)}>
-                <DeleteIcon />
+                <ShareIcon />
               </Button>
             </div>
           </Toast>
         </div>
       )}
+      {drawerOpen && <DrawerComponent drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />}
     </div>
   );
 };

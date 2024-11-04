@@ -7,7 +7,7 @@ import {
   DeleteIcon,
   ShareIcon,
   DownloadIcon,
-} from "../../components/icons";
+} from "../../components/Icons";
 import { Card as FlowbiteCard, Checkbox, Dropdown } from "flowbite-react";
 
 const Card = (pages) => {
@@ -18,6 +18,7 @@ const Card = (pages) => {
     handleDownload,
     handleDelete,
     handleShare,
+    setDrawerOpen,
   } = pages;
   const handleCheckboxClick = (url) => {
     if (checked.includes(url)) {
@@ -40,7 +41,7 @@ const Card = (pages) => {
         {(handleDownload || handleDelete || handleShare) && (
           <Dropdown
             label=""
-            
+            inline
             renderTrigger={() => (
               <span>
                 <MoreoptionsIcon />
@@ -74,7 +75,7 @@ const Card = (pages) => {
           </Dropdown>
         )}
       </div>
-      <div className="bg-bg rounded-lg  w-52 h-48 flex justify-center items-center relative">
+      <div className="bg-bg rounded-lg  w-52 h-48 flex justify-center items-center relative" onClick={() => setDrawerOpen(photoUrl)}>
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video

@@ -10,7 +10,7 @@ import {
   SidebarIcon,
   LoginIcon,
   LogoutIcon,
-} from "../icons";
+} from "../Icons";
 import Portal from "../Portal/Portal";
 import { useEffect, useState } from "react";
 
@@ -104,7 +104,7 @@ const Sidebar = (props) => {
           <span className={`ms-3 ${!isOpen && "hidden"}`}>{item.title}</span>
           {!isOpen && (
             <div
-              className="absolute left-16 scale-0 group-hover:scale-100 transition-all rounded bg-gray-800 p-2 text-xs text-white
+              className="absolute left-16 scale-0 group-hover:scale-100 transition-all rounded-lg bg-gray-800 p-3 text-sm text-white
                 before:content-[''] before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2
                 before:border-8 before:border-transparent before:border-r-gray-800"
             >

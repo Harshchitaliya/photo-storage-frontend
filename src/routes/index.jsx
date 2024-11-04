@@ -4,7 +4,7 @@ import Login from '../pages/Login';
 import { useAuth } from '../context/auth/AuthContext.jsx';
 import Gallery from '../pages/Gallery';
 import Upload from '../pages/Gallery/upload';
-import Loader from '../components/Loader';
+import Loader from '../components/Loader/index.jsx';
 
 function AppRoutes() {
   const { loading , currentUseruid } = useAuth();
