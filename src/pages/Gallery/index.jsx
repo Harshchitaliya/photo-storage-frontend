@@ -17,6 +17,11 @@ const Gallery = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { currentUseruid } = useAuth();
   useEffect(() => {
+    if (drawerOpen) {
+      setSelectedItems([]);
+    }
+  }, [drawerOpen]);
+  useEffect(() => {
     handleShowPhoto();
   }, []);
 
@@ -196,7 +201,15 @@ const Gallery = () => {
           </Toast>
         </div>
       )}
-      {drawerOpen && <DrawerComponent drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />}
+      {drawerOpen && (
+        <DrawerComponent
+          drawerOpen={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+          handleDownload={handleDownload}
+          handleDelete={handleDelete}
+          handleShare={handleShare}
+        />
+      )}
     </div>
   );
 };

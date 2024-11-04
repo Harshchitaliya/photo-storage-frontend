@@ -1,60 +1,61 @@
-
 import { Button, Drawer } from "flowbite-react";
-import { useState } from "react";
+import moment from "moment";
+import { DownloadIcon, ShareIcon, DeleteIcon } from "../../components/Icons";
 
- const DrawerComponent = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const DrawerComponent = (props) => {
+  const { drawerOpen, setDrawerOpen, handleDownload, handleShare, handleDelete } = props;
 
-  const handleClose = () => setIsOpen(false);
-
+  const handleClose = () => setDrawerOpen(false);
+    console.log(drawerOpen);
   return (
-    <>
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <Button onClick={() => setIsOpen(true)}>Show right drawer</Button>
-      </div>
-      <Drawer open={isOpen} onClose={handleClose} position="right">
-        <Drawer.Header title="Drawer" />
-        <Drawer.Items>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
-            Supercharge your hiring by taking advantage of our&nbsp;
-            <a href="#" className="text-cyan-600 underline hover:no-underline dark:text-cyan-500">
-              limited-time sale
-            </a>
-            &nbsp;for Flowbite Docs + Job Board. Unlimited access to over 190K top-ranked candidates and the #1 design
-            job board.
-          </p>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <a
-              href="#"
-              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-cyan-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-            >
-              Learn more
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center rounded-lg bg-cyan-700 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-800 focus:outline-none focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:hover:bg-cyan-700 dark:focus:ring-cyan-800"
-            >
-              Get access&nbsp;
-              <svg
-                className="ms-2 h-3.5 w-3.5 rtl:rotate-180"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 14 10"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M1 5h12m0 0L9 1m4 4L9 9"
+    <Drawer open={drawerOpen} position="right" className="w-2/4">
+      <Drawer.Items>
+        <div className="flex justify-end p-4">
+          <button onClick={handleClose} className="text-gray-500 hover:text-gray-700">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="p-4">
+        <div className="text-lg font-medium mb-2">{drawerOpen.title}</div>
+          <div className="mb-6">
+            <div className=" h-80 flex  justify-center">
+                <img 
+                src={drawerOpen?.downloadUrl} 
+                alt="Selected image" 
+                className="rounded-lg"
                 />
-              </svg>
-            </a>
+            </div>
+            <div className="flex gap-2 mt-4 justify-end">
+              <Button onClick={handleDownload}>
+                <DownloadIcon />
+            </Button>
+            <Button onClick={handleShare}   >
+                <ShareIcon />
+            </Button>
+            <Button onClick={handleDelete}   >
+                <DeleteIcon />
+            </Button>
+            </div>  
           </div>
-        </Drawer.Items>
-      </Drawer>
-    </>
+          <div className="space-y-4">
+            {drawerOpen.date && <div>
+              <div className="text-lg font-medium">Date captured</div>
+              <div className="text-gray-600">{moment(drawerOpen.date).format("MMM DD, YYYY")}</div>
+            </div>}
+            {drawerOpen?.sku &&<div>
+              <div className="text-lg font-medium">SKU</div>
+              <div className="text-gray-600">{drawerOpen?.sku}</div>
+            </div>}
+            {drawerOpen?.description &&<div>
+              <div className="text-lg font-medium">Description</div>
+              <div className="text-gray-600">{drawerOpen?.description}</div>
+            </div>}
+          </div>
+        </div>
+      </Drawer.Items>
+    </Drawer>
   );
 }
 
