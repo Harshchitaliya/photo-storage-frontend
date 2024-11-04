@@ -43,6 +43,9 @@ module.exports = {
           text: 'var(--info-text-color)',
         },
       },
+      inset: {
+        '245': '245px',
+      },
     },
   },
 };
