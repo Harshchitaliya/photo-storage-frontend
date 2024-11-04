@@ -9,6 +9,7 @@ import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
 import DrawerComponent from "./drawer";
+import SearchInput from "../../components/SearchInput";
 
 const Gallery = () => {
   const [photo, setPhoto] = useState([]);
@@ -154,16 +155,19 @@ const Gallery = () => {
   return (
     <div>
       {photo.length ? (
-        <div className="flex items-center p-4">
-          <Checkbox
-            checked={selectedItems.length === photo.length}
-            onChange={handleSelectAll}
-          />
-          <label className="ml-2 text-sm text-gray-500">Select All</label>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center p-2">
+            <Checkbox
+              checked={selectedItems.length === photo.length}
+              onChange={handleSelectAll}
+            />
+            <label className="ml-2 text-sm text-gray-500">Select All</label>
+          </div>
+          <SearchInput />
         </div>
       ) : null}
 
-      <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
+      <div className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto" style={{height: "calc(100vh - 120px)"}}>
         {loading ? (
           <div className="flex justify-center items-center h-screen">
             <Loader />

@@ -29,7 +29,7 @@ const Card = (pages) => {
   };
 
   return (
-    <FlowbiteCard className="max-w-sm bg-gray-800">
+    <FlowbiteCard className="max-w-sm dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
