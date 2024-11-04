@@ -1,6 +1,7 @@
 import { ref, getDownloadURL } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
+
 import { isVideo } from "../utils";
 
 export const setAllPhoto = async (props) => {
@@ -25,6 +26,7 @@ export const setAllPhoto = async (props) => {
             price: sku.price,
             type: sku.type,
             isVideo: isVideo(photo.url),
+            isFavorite: photo.isFavorite,
             allSearch: `${sku.sku} ${photo.title}`.toLowerCase(),
           };
         })
@@ -43,6 +45,37 @@ export const setAllPhoto = async (props) => {
     );
 
     return photosWithUrls;
+  }
+};
+
+export const deletePhoto = async (props) => {
+  const { urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems } = props;
+  if (!urls || urls.length === 0) return;
+
+  const userDocRef = doc(firestore, "Users", currentUseruid);
+  try {
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const updatedSkus = userData.skus.map((sku) => ({
+        ...sku,
+        photos: sku.photos.map((photo) => ({
+          ...photo,
+          isDeleted: urls.includes(photo.url) ? true : photo.isDeleted,
+        })),
+      }));
+
+      // Update the document with the modified skus
+      await updateDoc(userDocRef, {
+        skus: updatedSkus,
+      }).then(() => {
+        handleShowPhoto();
+        setSelectedItems([]);
+        alert("Photos deleted successfully");
+      });
+    }
+  } catch (error) {
+    console.error("Error deleting photos:", error);
   }
 };
 

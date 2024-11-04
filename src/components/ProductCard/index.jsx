@@ -7,8 +7,9 @@ import {
   DeleteIcon,
   ShareIcon,
   DownloadIcon,
+  FavoriteIcon,
 } from "../Icons";
-import { Card , Checkbox, Dropdown } from "flowbite-react";
+import { Card, Checkbox, Dropdown } from "flowbite-react";
 
 const ProductCard = (pages) => {
   const {
@@ -18,6 +19,7 @@ const ProductCard = (pages) => {
     handleDownload,
     handleDelete,
     handleShare,
+    handleFavorite,
     setDrawerOpen,
   } = pages;
   const handleCheckboxClick = (url) => {
@@ -33,12 +35,12 @@ const ProductCard = (pages) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
-            checked={checked.includes(photoUrl.downloadUrl)}
-            onChange={() => handleCheckboxClick(photoUrl.downloadUrl)}
+            checked={checked.includes(photoUrl.url)}
+            onChange={() => handleCheckboxClick(photoUrl.url)}
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
-        {(handleDownload || handleDelete || handleShare) && (
+        {(handleDownload || handleDelete || handleShare || handleFavorite) && (
           <Dropdown
             label=""
             inline
@@ -68,15 +70,26 @@ const ProductCard = (pages) => {
             {handleShare && (
               <Dropdown.Item
                 className="w-40 gap-2 text-white "
-                onClick={() => handleShare(photoUrl.downloadUrl)}
+                onClick={() => handleShare(photoUrl.url)}
               >
                 <ShareIcon /> Share
+              </Dropdown.Item>
+            )}
+            {handleFavorite && (
+              <Dropdown.Item
+                className="w-40 gap-2 text-white "
+                onClick={() => handleFavorite(photoUrl.url)}
+              >
+                <FavoriteIcon /> Favorite
               </Dropdown.Item>
             )}
           </Dropdown>
         )}
       </div>
-      <div className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg" onClick={() => setDrawerOpen(photoUrl)}>
+      <div
+        className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
+        onClick={() => setDrawerOpen(photoUrl)}
+      >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video
@@ -97,10 +110,14 @@ const ProductCard = (pages) => {
           />
         )}
       </div>
-      <div className="text-gray-400 text-sm flex items-center gap-2">
-        {photoUrl.isVideo ? <VideoIcon /> : <ImageIcon />}•{" "}
-        {moment(photoUrl.date).format("MMM DD, YYYY")}
-        <span className="text-white">{photoUrl.type}</span>
+      <div className="text-gray-400 text-sm flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          {photoUrl.isVideo ? <VideoIcon /> : <ImageIcon />}•{" "}
+          {moment(photoUrl.date).format("MMM DD, YYYY")}
+          {console.log(photoUrl.isFavorite)}
+          <span className="text-white">{photoUrl.type}</span>
+        </div>
+        {photoUrl.isFavorite && <FavoriteIcon />}
       </div>
     </Card>
   );

@@ -10,14 +10,17 @@ import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
 // import DrawerComponent from "./drawer";
+import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";
-
+import { setAllPhoto } from "../../server/photo";
 const Product = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [allFilter, setAllFilter] = useState({});
+  const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
   useEffect(() => {
     let filtered = photo;
@@ -32,7 +35,7 @@ const Product = () => {
       setSelectedItems([]);
     }
   }, [drawerOpen]);
-  
+
   useEffect(() => {
     handleShowPhoto();
   }, []);
@@ -128,20 +131,17 @@ const Product = () => {
 
   return (
     <div>
-      {photo.length ? (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center p-2">
-            <Checkbox
-              checked={selectedItems.length === photo.length}
-              onChange={handleSelectAll}
-            />
-            <label className="ml-2 text-sm text-gray-500">Select All</label>
-          </div>
-          <SearchInput onSearch={setSearch} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center p-2">
+          <Checkbox
+            checked={selectedItems.length === filteredPhoto.length && filteredPhoto.length > 0}
+            onChange={handleSelectAll}
+          />
+          <label className="ml-2 text-sm text-gray-500">Select All</label>
         </div>
-      ) : null}
-
-      <div className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto" style={{height: "calc(100vh - 120px)"}}>
+        <SearchInput onSearch={setSearch} filter={() => setFilterModalOpen(true)} />
+      </div>
+      <div className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto" style={{ height: "calc(100vh - 120px)" }}>
         {loading ? (
           <div className="flex justify-center items-center h-screen">
             <Loader />
@@ -188,6 +188,7 @@ const Product = () => {
           handleShare={handleShare}
         />
       )} */}
+      {filterModalOpen && <FilterModal isOpen={filterModalOpen} setIsOpen={setFilterModalOpen} />}
     </div>
   );
 };
