@@ -7,10 +7,10 @@ import {
   DeleteIcon,
   ShareIcon,
   DownloadIcon,
-} from "../../components/Icons";
-import { Card as FlowbiteCard, Checkbox, Dropdown } from "flowbite-react";
+} from "../Icons";
+import { Card , Checkbox, Dropdown } from "flowbite-react";
 
-const Card = (pages) => {
+const ProductCard = (pages) => {
   const {
     photoUrl,
     checkboxClick,
@@ -29,7 +29,7 @@ const Card = (pages) => {
   };
 
   return (
-    <FlowbiteCard className="max-w-sm dark:bg-gray-800">
+    <Card className="max-w-sm dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
@@ -102,8 +102,8 @@ const Card = (pages) => {
         {moment(photoUrl.date).format("MMM DD, YYYY")}
         <span className="text-white">{photoUrl.type}</span>
       </div>
-    </FlowbiteCard>
+    </Card>
   );
 };
 
-export default Card;
+export default ProductCard;

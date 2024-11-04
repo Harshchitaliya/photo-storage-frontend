@@ -2,82 +2,69 @@ import React, { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { ref, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/auth/AuthContext";
+
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { isVideo } from "../../utils";
-import Card from "./Card";
+import ProductCard from "../../components/ProductCard";
 import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
 import DrawerComponent from "./drawer";
 import SearchInput from "../../components/SearchInput";
+import { setAllPhoto } from "../../server/photo";
 
 const Gallery = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filteredPhoto, setFilteredPhoto] = useState([]);
+  const [type, setType] = useState("all");
   const { currentUseruid } = useAuth();
+  useEffect(() => {
+    let filtered = photo;
+    if (search) {
+      filtered = photo.filter((item) => item.allSearch.includes(search));
+    }
+    if (type !== "all") {
+      filtered = filtered.filter((item) =>
+        type === "image"
+          ? !item.isVideo
+          : type === "video"
+          ? item.isVideo
+          : true
+      );
+    }
+    setFilteredPhoto(filtered);
+  }, [search, photo, type]);
+
   useEffect(() => {
     if (drawerOpen) {
       setSelectedItems([]);
     }
   }, [drawerOpen]);
+
   useEffect(() => {
     handleShowPhoto();
   }, []);
 
-  const handleShowPhoto = useCallback(async () => {
-    if (!currentUseruid) {
-      console.log("No user ID found");
-      return;
-    }
+  const handleShowPhoto = async () => {
     setLoading(true);
 
-    const userDocRef = doc(firestore, "Users", currentUseruid);
     try {
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const photoData = userData.skus
-          .flatMap((sku) =>
-            sku.photos.map((photo) => {
-              if (photo.isDeleted) {
-                return null;
-              }
-              return {
-                url: photo.url,
-                date: photo.date,
-                sku: sku.sku,
-                title: sku.title,
-                description: sku.description,
-                quantity: sku.quantity,
-                price: sku.price,
-                type: sku.type,
-                isVideo: isVideo(photo.url),
-              };
-            })
-          )
-          .filter((photo) => photo !== null);
-
-        const photosWithUrls = await Promise.all(
-          photoData.map(async (photo) => {
-            const storageRef = ref(storage, photo.url);
-            const downloadUrl = await getDownloadURL(storageRef);
-            return {
-              ...photo,
-              downloadUrl,
-            };
-          })
-        );
-
-        setPhoto(photosWithUrls);
-      }
+      const allphotos = await setAllPhoto({
+        currentUseruid,
+        firestore,
+        storage,
+      });
+      setPhoto(allphotos);
     } catch (error) {
       console.error("Error fetching photos:", error);
     } finally {
       setLoading(false);
     }
-  }, [currentUseruid]);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -91,9 +78,7 @@ const Gallery = () => {
         setSelectedItems([]);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -158,23 +143,50 @@ const Gallery = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center p-2">
             <Checkbox
-              checked={selectedItems.length === photo.length}
+              checked={selectedItems.length === filteredPhoto.length}
               onChange={handleSelectAll}
             />
             <label className="ml-2 text-sm text-gray-500">Select All</label>
           </div>
-          <SearchInput />
+          <Button.Group className="flex items-center">
+            <Button
+              className={`rounded-r-none ${
+                type === "all" ? "bg-gray-800" : ""
+              }`}
+              onClick={() => setType("all")}
+            >
+              All
+            </Button>
+            <Button
+              className={`rounded-l-none ${
+                type === "image" ? "bg-gray-800" : ""
+              }`}
+              onClick={() => setType("image")}
+            >
+              Image
+            </Button>
+            <Button
+              className={`${type === "video" ? "bg-gray-800" : ""}`}
+              onClick={() => setType("video")}
+            >
+              Video
+            </Button>
+          </Button.Group>
+          <SearchInput onSearch={setSearch} />
         </div>
       ) : null}
 
-      <div className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto" style={{height: "calc(100vh - 120px)"}}>
+      <div
+        className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
+        style={{ height: "calc(100vh - 120px)" }}
+      >
         {loading ? (
           <div className="flex justify-center items-center h-screen">
             <Loader />
           </div>
         ) : null}
-        {photo.map((photoUrl, index) => (
-          <Card
+        {filteredPhoto.map((photoUrl, index) => (
+          <ProductCard
             photoUrl={photoUrl}
             key={index}
             checkboxClick={setSelectedItems}
