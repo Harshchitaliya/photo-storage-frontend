@@ -1,39 +1,81 @@
 import React, { useState } from "react";
 import moment from "moment";
-import { VideoIcon, ImageIcon, MoreoptionsIcon } from "../../components/icons";
-import { Card as FlowbiteCard, Checkbox } from 'flowbite-react';
+import {
+  VideoIcon,
+  ImageIcon,
+  MoreoptionsIcon,
+  DeleteIcon,
+  ShareIcon,
+  DownloadIcon,
+} from "../../components/Icons";
+import { Card as FlowbiteCard, Checkbox, Dropdown } from "flowbite-react";
 
-const Card = ({ photoUrl, checkboxClick, checked }) => {
-  
+const Card = (pages) => {
+  const {
+    photoUrl,
+    checkboxClick,
+    checked,
+    handleDownload,
+    handleDelete,
+    handleShare,
+    setDrawerOpen,
+  } = pages;
   const handleCheckboxClick = (url) => {
     if (checked.includes(url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
     } else {
       checkboxClick((prev) => [...prev, url]);
     }
-
   };
 
   return (
     <FlowbiteCard className="max-w-sm bg-gray-800">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <Checkbox
             checked={checked.includes(photoUrl.downloadUrl)}
             onChange={() => handleCheckboxClick(photoUrl.downloadUrl)}
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
-        <button
-          id="dropdownMenuIconButton"
-          data-dropdown-toggle="dropdownDots"
-          type="button"
-          className="text-gray-400 hover:text-white"
-        >
-          <MoreoptionsIcon />
-        </button>
+        {(handleDownload || handleDelete || handleShare) && (
+          <Dropdown
+            label=""
+            inline
+            renderTrigger={() => (
+              <span>
+                <MoreoptionsIcon />
+              </span>
+            )}
+          >
+            {handleDownload && (
+              <Dropdown.Item
+                className="w-40 gap-2"
+                onClick={() => handleDownload(photoUrl.downloadUrl)}
+              >
+                <DownloadIcon /> Download
+              </Dropdown.Item>
+            )}
+            {handleDelete && (
+              <Dropdown.Item
+                className="w-40 gap-2"
+                onClick={() => handleDelete(photoUrl.url)}
+              >
+                <DeleteIcon /> Delete
+              </Dropdown.Item>
+            )}
+            {handleShare && (
+              <Dropdown.Item
+                className="w-40 gap-2 "
+                onClick={() => handleShare(photoUrl.downloadUrl)}
+              >
+                <ShareIcon /> Share
+              </Dropdown.Item>
+            )}
+          </Dropdown>
+        )}
       </div>
-      <div className="bg-bg rounded-lg mb-4 w-52 h-48 flex justify-center items-center relative">
+      <div className="bg-bg rounded-lg  w-52 h-48 flex justify-center items-center relative" onClick={() => setDrawerOpen(photoUrl)}>
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video
@@ -45,19 +87,6 @@ const Card = ({ photoUrl, checkboxClick, checked }) => {
             >
               Your browser does not support the video tag.
             </video>
-            
-            {/* {!isPlaying && (
-              <div 
-                className="absolute inset-0 flex items-center justify-center cursor-pointer bg-black bg-opacity-30"
-                // onClick={handleVideoClick}
-              >
-                <div className="w-12 h-12 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
-            )} */}
           </div>
         ) : (
           <img
@@ -73,7 +102,6 @@ const Card = ({ photoUrl, checkboxClick, checked }) => {
         <span className="text-white">{photoUrl.type}</span>
       </div>
     </FlowbiteCard>
-
   );
 };
 
