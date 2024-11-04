@@ -1,6 +1,6 @@
 import { useAuth } from "../../context/auth/AuthContext";
 import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, ProductsIcon, GalleryIcon, RecycleIcon, CatalogIcon, ProfileIcon, SidebarIcon, LoginIcon, LogoutIcon } from '../icons/Sidebar';
+import { HomeIcon, ProductsIcon, GalleryIcon, RecycleIcon, CatalogIcon, ProfileIcon, SidebarIcon, LoginIcon, LogoutIcon } from '../icons';
 import Portal from "../Portal/Portal";
 
 const navagate = [

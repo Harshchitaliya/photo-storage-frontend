@@ -1,106 +1,107 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { storage, firestore } from '../../context/auth/connection/connection';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { useAuth } from '../../context/auth/AuthContext';
-import { doc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect, useCallback } from "react";
+import { storage, firestore } from "../../context/auth/connection/connection";
+import { ref, getDownloadURL } from "firebase/storage";
+import { useAuth } from "../../context/auth/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { isVideo } from "../../utils";
+import Card from "./Card";
+import Loader from "../../components/Loader";
 
 const Gallery = () => {
     const [photo, setPhoto] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
     const { currentUseruid } = useAuth();
     useEffect(() => {
         if (currentUseruid) {
             handleShowPhoto();
         }
-    }, [currentUseruid, photo]);
-
+    }, [currentUseruid]);
 
     const handleShowPhoto = useCallback(async () => {
         if (!currentUseruid) {
             console.log("No user ID found");
             return;
         }
+        setLoading(true);
 
-        const userDocRef = doc(firestore, 'Users', currentUseruid);
+        const userDocRef = doc(firestore, "Users", currentUseruid);
         try {
             const userDoc = await getDoc(userDocRef);
             if (userDoc.exists()) {
                 const userData = userDoc.data();
-                const photoPaths = userData.skus.flatMap(sku => sku.photos.map(photo => photo.url));
+                const photoData = userData.skus.flatMap((sku) =>
+                    sku.photos.map((photo) => {
+                        if (photo.isDeleted) {
+                            return null;
+                        }
+                        return ({
+                            url: photo.url,
+                            date: photo.date,
+                            sku: sku.sku,
+                            title: sku.title,
+                            description: sku.description,
+                            quantity: sku.quantity,
+                            price: sku.price,
+                            type: sku.type,
+                            isVideo: isVideo(photo.url)
+                        })
+                    })
+                ).filter(photo => photo !== null);
 
-                const photoUrls = await Promise.all(
-                    photoPaths.map(async (path) => {
-                        const storageRef = ref(storage, path);
-                        return await getDownloadURL(storageRef);
+                const photosWithUrls = await Promise.all(
+                    photoData.map(async (photo) => {
+                        const storageRef = ref(storage, photo.url);
+                        const downloadUrl = await getDownloadURL(storageRef);
+                        return {
+                            ...photo,
+                            downloadUrl,
+                        };
                     })
                 );
 
-                setPhoto(photoUrls);
-            } else {
-                console.log('No photos found');
+                setPhoto(photosWithUrls);
             }
         } catch (error) {
-            console.error("Error fetching photo:", error);
+            console.error("Error fetching photos:", error);
+        } finally {
+            setLoading(false);
         }
     }, [currentUseruid]);
 
-
+    const handleSelectAll = () => {
+        if (selectedItems.length === photo.length) {
+            setSelectedItems([]);
+        } else {
+            setSelectedItems(photo.map((photo) => photo.downloadUrl));
+        }
+    }
 
     return (
-        <div className="">
-            
-            <div className="grid grid-cols-3 gap-4 mt-8">
+        <div>
+            <input type="checkbox" onChange={handleSelectAll} />
+            <label >Select All</label>
+            <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
+                {loading ? (
+                    <div className="flex justify-center items-center h-screen">
+                        <Loader />
+                    </div>
+                ) : (
+                    <></>
+                )}
                 {photo.map((photoUrl, index) => (
-                    <div className="max-w-sm bg-[#1e1e1e] rounded-lg p-4 text-white" key={index}>
-                    {/* Header with icon and filename */}
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                        <div className="bg-[#90c397] w-6 h-6 flex items-center justify-center rounded">
-                            <span className="text-black text-sm font-medium">X</span>
-                        </div>
-                        <span className="text-white">7075831.xlsx</span>
-                        </div>
-                        <button className="text-gray-400 hover:text-white">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                        </svg>
-                        </button>
-                    </div>
-        
-                    {/* Preview area */}
-                    <div className="bg-white rounded-lg mb-4 h-48">
-                        {/* You can add a preview image or placeholder here */}
-                    </div>
-        
-                    {/* Footer with user info and timestamp */}
-                    <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full overflow-hidden">
-                        <img 
-                            src="/path-to-user-avatar.jpg" 
-                            alt="User avatar"
-                            className="w-full h-full object-cover"
-                        />
-                        </div>
-                        <span className="text-gray-400 text-sm">You opened • Oct 22, 2024</span>
-                    </div>
-                    </div>
-                    // <div
-                    //     key={index}
-                    //     className="aspect-square group relative overflow-hidden rounded-lg shadow-md"
-                    // >
-                    //     <img
-                    //         src={photoUrl}
-                    //         alt={`Photo ${index}`}
-                    //         className="w-full h-full object-cover transition-transform duration-200 
-                    //                  group-hover:scale-110"
-                    //         loading="lazy"
-                    //     />
-                    //     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-200" />
-                    // </div>
+                    <Card
+                        photoUrl={photoUrl}
+                        key={index}
+                        checkboxClick={setSelectedItems}
+                        checked={selectedItems}
+                    />
                 ))}
             </div>
-
         </div>
-    )
+
+
+    );
 };
 
 export default Gallery;
