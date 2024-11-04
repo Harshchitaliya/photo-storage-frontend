@@ -76,7 +76,7 @@ const ProductCard = (pages) => {
           </Dropdown>
         )}
       </div>
-      <div className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-lg" onClick={() => setDrawerOpen(photoUrl)}>
+      <div className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg" onClick={() => setDrawerOpen(photoUrl)}>
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video
