@@ -10,6 +10,7 @@ import Loader from "../../components/Loader";
 const Gallery = () => {
     const [photo, setPhoto] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
     const { currentUseruid } = useAuth();
     useEffect(() => {
         if (currentUseruid) {
@@ -31,10 +32,11 @@ const Gallery = () => {
                 const userData = userDoc.data();
                 const photoData = userData.skus.flatMap((sku) =>
                     sku.photos.map((photo) => {
+                        if (photo.isDeleted) {
+                            return null;
+                        }
                         return ({
                             url: photo.url,
-                            isFavorite: photo.isFavorite || false,
-                            isDelete: photo.isDelete || false,
                             date: photo.date,
                             sku: sku.sku,
                             title: sku.title,
@@ -45,7 +47,7 @@ const Gallery = () => {
                             isVideo: isVideo(photo.url)
                         })
                     })
-                );
+                ).filter(photo => photo !== null);
 
                 const photosWithUrls = await Promise.all(
                     photoData.map(async (photo) => {
@@ -67,20 +69,37 @@ const Gallery = () => {
         }
     }, [currentUseruid]);
 
-    return (
+    const handleSelectAll = () => {
+        if (selectedItems.length === photo.length) {
+            setSelectedItems([]);
+        } else {
+            setSelectedItems(photo.map((photo) => photo.downloadUrl));
+        }
+    }
 
-        <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
-            {loading ? (
-                <div className="flex justify-center items-center h-screen">
-                    <Loader />
-                </div>
-            ) : (
-                <></>
-            )}
-            {photo.map((photoUrl, index) => (
-                <Card photoUrl={photoUrl} key={index} />
-            ))}
+    return (
+        <div>
+            <input type="checkbox" onChange={handleSelectAll} />
+            <label >Select All</label>
+            <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
+                {loading ? (
+                    <div className="flex justify-center items-center h-screen">
+                        <Loader />
+                    </div>
+                ) : (
+                    <></>
+                )}
+                {photo.map((photoUrl, index) => (
+                    <Card
+                        photoUrl={photoUrl}
+                        key={index}
+                        checkboxClick={setSelectedItems}
+                        checked={selectedItems}
+                    />
+                ))}
+            </div>
         </div>
+
 
     );
 };
