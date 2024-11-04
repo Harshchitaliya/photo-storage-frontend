@@ -122,7 +122,7 @@ const Sidebar = (props) => {
         <button
           onClick={toggleSidebar}
           className={`w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 z-20 ${
-            isOpen ? "absolute top-5 left-64" : "fixed top-5 left-14"
+            isOpen ? "absolute top-5 left-245" : "fixed top-5 left-14"
           }`}
         >
           <span

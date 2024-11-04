@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import {
   VideoIcon,
@@ -42,6 +42,7 @@ const Card = (pages) => {
           <Dropdown
             label=""
             inline
+            className="border-0"
             renderTrigger={() => (
               <span>
                 <MoreoptionsIcon />
@@ -50,7 +51,7 @@ const Card = (pages) => {
           >
             {handleDownload && (
               <Dropdown.Item
-                className="w-40 gap-2"
+                className="w-40 gap-2 text-white"
                 onClick={() => handleDownload(photoUrl.downloadUrl)}
               >
                 <DownloadIcon /> Download
@@ -58,7 +59,7 @@ const Card = (pages) => {
             )}
             {handleDelete && (
               <Dropdown.Item
-                className="w-40 gap-2"
+                className="w-40 gap-2 text-white"
                 onClick={() => handleDelete(photoUrl.url)}
               >
                 <DeleteIcon /> Delete
@@ -66,7 +67,7 @@ const Card = (pages) => {
             )}
             {handleShare && (
               <Dropdown.Item
-                className="w-40 gap-2 "
+                className="w-40 gap-2 text-white "
                 onClick={() => handleShare(photoUrl.downloadUrl)}
               >
                 <ShareIcon /> Share
@@ -75,12 +76,12 @@ const Card = (pages) => {
           </Dropdown>
         )}
       </div>
-      <div className="bg-bg rounded-lg  w-52 h-48 flex justify-center items-center relative" onClick={() => setDrawerOpen(photoUrl)}>
+      <div className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-105 hover:shadow-lg" onClick={() => setDrawerOpen(photoUrl)}>
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video
               src={photoUrl.downloadUrl}
-              className="w-full h-full object-cover rounded-lg"
+              className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
               controls={false}
               preload="metadata"
               playsInline
@@ -92,7 +93,7 @@ const Card = (pages) => {
           <img
             src={photoUrl.downloadUrl}
             alt="Preview"
-            className="w-full h-full object-cover rounded-lg"
+            className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
           />
         )}
       </div>
