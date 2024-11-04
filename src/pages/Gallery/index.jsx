@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { ref, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/auth/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { isVideo } from "../../utils";
 import Card from "./Card";
 import Loader from "../../components/Loader";
@@ -13,10 +13,8 @@ const Gallery = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const { currentUseruid } = useAuth();
     useEffect(() => {
-        if (currentUseruid) {
-            handleShowPhoto();
-        }
-    }, [currentUseruid]);
+        handleShowPhoto();
+    }, []);
 
     const handleShowPhoto = useCallback(async () => {
         if (!currentUseruid) {
@@ -76,6 +74,38 @@ const Gallery = () => {
             setSelectedItems(photo.map((photo) => photo.downloadUrl));
         }
     }
+
+    const handleDelete = async (urls) => {
+        if (!urls || urls.length === 0) return;
+
+        const userDocRef = doc(firestore, "Users", currentUseruid);
+        try {
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const updatedSkus = userData.skus.map(sku => ({
+                    ...sku,
+                    photos: sku.photos.map(photo => ({
+                        ...photo,
+                        isDeleted: urls.includes(photo.url) ? true : photo.isDeleted
+                    }))
+                }));
+
+                // Update the document with the modified skus
+                await updateDoc(userDocRef, {
+                    skus: updatedSkus
+                }).then(() => {
+                    handleShowPhoto();
+                    setSelectedItems([]);
+                    alert("Photos deleted successfully");
+                });
+
+
+            }
+        } catch (error) {
+            console.error("Error deleting photos:", error);
+        }
+    };
 
     return (
         <div>
