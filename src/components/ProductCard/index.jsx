@@ -24,6 +24,40 @@ const ProductCard = (pages) => {
     setDrawerOpen,
     handleRecycle,
   } = pages;
+
+  const buttonList = [
+    {
+      handler: handleDownload,
+      icon: <DownloadIcon />,
+      text: "Download",
+      onClick: () => handleDownload(photoUrl.downloadUrl),
+    },
+    {
+      handler: handleDelete,
+      icon: <DeleteIcon />,
+      text: "Delete",
+      onClick: () => handleDelete(photoUrl.url),
+    },
+    {
+      handler: handleShare,
+      icon: <ShareIcon />,
+      text: "Share",
+      onClick: () => handleShare(photoUrl.url),
+    },
+    {
+      handler: handleFavorite,
+      icon: <FavoriteIcon />,
+      text: "Favorite",
+      onClick: () => handleFavorite(photoUrl.url),
+    },
+    {
+      handler: handleRecycle,
+      icon: <RecycleIcon />,
+      text: "Recycle",
+      onClick: () => handleRecycle(photoUrl.url),
+    },
+  ];
+  
   const handleCheckboxClick = (url) => {
     if (checked.includes(url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
@@ -37,13 +71,17 @@ const ProductCard = (pages) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
-          className="cursor-pointer"
+            className="cursor-pointer"
             checked={checked.includes(photoUrl.url)}
             onChange={() => handleCheckboxClick(photoUrl.url)}
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
-        {(handleDownload || handleDelete || handleShare || handleFavorite || handleRecycle) && (
+        {(handleDownload ||
+          handleDelete ||
+          handleShare ||
+          handleFavorite ||
+          handleRecycle) && (
           <Dropdown
             label=""
             inline
@@ -54,45 +92,17 @@ const ProductCard = (pages) => {
               </span>
             )}
           >
-            {handleDownload && (
-              <Dropdown.Item
-                className="w-40 gap-2 text-white"
-                onClick={() => handleDownload(photoUrl.downloadUrl)}
-              >
-                <DownloadIcon /> Download
-              </Dropdown.Item>
-            )}
-            {handleDelete && (
-              <Dropdown.Item
-                className="w-40 gap-2 text-white"
-                onClick={() => handleDelete(photoUrl.url)}
-              >
-                <DeleteIcon /> Delete
-              </Dropdown.Item>
-            )}
-            {handleShare && (
-              <Dropdown.Item
-                className="w-40 gap-2 text-white "
-                onClick={() => handleShare(photoUrl.url)}
-              >
-                <ShareIcon /> Share
-              </Dropdown.Item>
-            )}
-            {handleFavorite && (
-              <Dropdown.Item
-                className="w-40 gap-2 text-white "
-                onClick={() => handleFavorite(photoUrl.url)}
-              >
-                <FavoriteIcon /> Favorite
-              </Dropdown.Item>
-            )}
-            {handleRecycle && (
-              <Dropdown.Item
-                className="w-40 gap-2 text-white "
-                onClick={() => handleRecycle(photoUrl.url)}
-              >
-                <RecycleIcon /> Recycle
-              </Dropdown.Item>
+            {buttonList.map(
+              ({ handler, icon, text, onClick }) =>
+                handler && (
+                  <Dropdown.Item
+                    key={text}
+                    className="w-40 gap-2 text-white"
+                    onClick={onClick}
+                  >
+                    {icon} {text}
+                  </Dropdown.Item>
+                )
             )}
           </Dropdown>
         )}
@@ -124,7 +134,7 @@ const ProductCard = (pages) => {
       <div className="text-gray-400 text-sm flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {photoUrl.isVideo ? <VideoIcon /> : <ImageIcon />}•{" "}
-          {moment(photoUrl.date).format("MMM DD, YYYY")}        
+          {moment(photoUrl.date).format("MMM DD, YYYY")}
           <span className="text-white">{photoUrl.type}</span>
         </div>
         {photoUrl.isFavorite && <FavoriteIcon />}

@@ -13,7 +13,7 @@ import {
 import { Button, Checkbox, Toast, Table } from "flowbite-react";
 import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";
-import { setAllPhoto } from "../../server/photo";
+import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
 const buttonList = [
@@ -53,6 +53,7 @@ const Product = () => {
       );
     }
     setFilteredPhoto(filtered);
+    setSelectedItems([]);
   }, [allFilter, photo]);
 
   const { currentUseruid } = useAuth();
@@ -70,7 +71,7 @@ const Product = () => {
   const handleShowPhoto = useCallback(async () => {
     setLoading(true);
     try {
-      const allphotos = await setAllPhoto({
+      const allphotos = await showsku({
         currentUseruid,
         firestore,
         storage,
@@ -141,17 +142,18 @@ const Product = () => {
         }).then(() => {
           handleShowPhoto();
           setSelectedItems([]);
-          alert("Photos deleted successfully");
         });
       }
+
     } catch (error) {
       console.error("Error deleting photos:", error);
     }
   };
-  console.log("filteredPhoto", filteredPhoto);
+
   const handleShare = (url) => {
     console.log(url);
   };
+
   const handleDownload = (url) => {
     console.log(url);
   };

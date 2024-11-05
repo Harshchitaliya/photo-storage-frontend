@@ -38,7 +38,7 @@ const TableView = (props) => {
     if (!sortField) return filteredPhoto;
 
     return [...filteredPhoto].sort((a, b) => {
-      if (sortField === "quantity" || sortField === "views") {
+      if (sortField === "quantity" || sortField === "price") {
         const aValue = Number(a[sortField] || 0);
         const bValue = Number(b[sortField] || 0);
 
@@ -113,11 +113,11 @@ const TableView = (props) => {
           </Table.HeadCell>
           <Table.HeadCell
             className="cursor-pointer hover:bg-gray-700"
-            onClick={() => handleSort("views")}
+            onClick={() => handleSort("price")}
           >
             <div className="flex items-center">
-              Views
-              <SortIcon field="views" />
+              Price
+              <SortIcon field="price" />
             </div>
           </Table.HeadCell>
           <Table.HeadCell>Actions</Table.HeadCell>
@@ -150,7 +150,7 @@ const TableView = (props) => {
                 </Table.Cell>
                 <Table.Cell>
                   <img
-                    src={item.downloadUrl}
+                    src={item.photos?.[0]?.downloadUrl}
                     alt="product"
                     className="w-16 h-16 object-cover rounded"
                   />
@@ -159,7 +159,7 @@ const TableView = (props) => {
                 <Table.Cell>{item.description || "-"}</Table.Cell>
                 <Table.Cell>{item.type || "-"}</Table.Cell>
                 <Table.Cell>{item.quantity || "0"}</Table.Cell>
-                <Table.Cell>{item.views || 0}</Table.Cell>
+                <Table.Cell>{item.price || 0}</Table.Cell>
                 <Table.Cell>
                   <div className="flex gap-2">
                     <Button
