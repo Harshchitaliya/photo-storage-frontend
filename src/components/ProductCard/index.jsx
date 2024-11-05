@@ -37,6 +37,7 @@ const ProductCard = (pages) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
+          className="cursor-pointer"
             checked={checked.includes(photoUrl.url)}
             onChange={() => handleCheckboxClick(photoUrl.url)}
           />

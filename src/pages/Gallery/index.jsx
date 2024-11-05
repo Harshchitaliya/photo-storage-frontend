@@ -5,20 +5,25 @@ import ProductCard from "../../components/ProductCard";
 import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
-import DrawerComponent from "./drawer";
+import DrawerComponent from "./Drawer";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
 import { ref, getDownloadURL } from "firebase/storage";
 
+
 const Gallery = () => {
     const [photo, setPhoto] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [selectedItems, setSelectedItems] = useState([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredPhoto, setFilteredPhoto] = useState([]);
     const [type, setType] = useState("all");
     const { currentUseruid } = useAuth();
+    const galleryphoto = true;
+    const isrecycle = false;
+
+
     useEffect(() => {
         let filtered = photo;
         if (search) {
@@ -30,7 +35,8 @@ const Gallery = () => {
                     ? !item.isVideo
                     : type === "video"
                         ? item.isVideo
-                        : true
+                        : item.isFavorite
+
             );
         }
         setFilteredPhoto(filtered);
@@ -47,8 +53,8 @@ const Gallery = () => {
     }, []);
 
     const handleShowPhoto = async () => {
-        if(photo.length < 0){
-            setLoading(true);
+        if (photo.length <= 0) {
+            // setLoading(true)
         }
 
         try {
@@ -56,13 +62,15 @@ const Gallery = () => {
                 currentUseruid,
                 firestore,
                 storage,
+                galleryphoto
             });
             setPhoto(allphotos);
         } catch (error) {
             console.error("Error fetching photos:", error);
-        } finally {
-            setLoading(false);
         }
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
     useEffect(() => {
@@ -100,53 +108,82 @@ const Gallery = () => {
     };
 
     const handleDelete = async (urls) => {
-        try{
-            await deletePhoto({ urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems })
-            handleShowPhoto();
-        } catch(error){
+        try {
+            setLoading(true)
+            await deletePhoto({ urls, currentUseruid, firestore, isrecycle })
+            await handleShowPhoto();
+            setSelectedItems([]);
+        } catch (error) {
             console.log(error)
+        } finally {
+            setLoading(false);
         }
     }
 
     const handleFavorite = async (urls) => {
-        try{
+        try {
+            setLoading(true)
             await setFavorite({ urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems })
-        } catch(error){
+        } catch (error) {
             console.log(error)
+        } finally {
+            setLoading(false);
         }
 
     }
 
     const handleDownload = async (urls) => {
-        const urlArray = Array.isArray(urls) ? urls : [urls];
-        
-        for (const url of urlArray) {
-            const storageRef = ref(storage, url);
-            try {
-                const downloadUrl = await getDownloadURL(storageRef);
-                const filename = downloadUrl.split('/').pop();
-                const atag = document.createElement('a');
-                atag.href = downloadUrl;
-                atag.setAttribute('download', filename);
-                document.body.appendChild(atag);
-                atag.click();
-                document.body.removeChild(atag);
-            } catch (error) {
-                console.error(`Error downloading ${url}:`, error);
+
+
+        try {
+            const urlArray = Array.isArray(urls) ? urls : [urls];
+
+            for (const url of urlArray) {
+                const storageRef = ref(storage, url);
+                try {
+                    setLoading(true)
+                    const downloadUrl = await getDownloadURL(storageRef);
+                    const filename = downloadUrl.split('/').pop();
+                    const atag = document.createElement('a');
+                    atag.href = downloadUrl;
+                    atag.setAttribute('download', filename);
+                    document.body.appendChild(atag);
+                    atag.click();
+                    document.body.removeChild(atag);
+                } catch (error) {
+                    console.error(`Error downloading ${url}:`, error);
+                }
             }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false);
         }
+
     };
 
     const handleShare = async (url) => {
-        console.log(url);
+        try {
+            console.log(url)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div>
+            {loading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                    <Loader />
+                </div>
+            )}
 
             <div className="flex items-center justify-between">
                 <div className="flex items-center p-2">
                     <Checkbox
+                        className="cursor-pointer"
                         checked={selectedItems.length === filteredPhoto.length && filteredPhoto.length > 0}
                         onChange={handleSelectAll}
                     />
@@ -172,6 +209,13 @@ const Gallery = () => {
                         onClick={() => setType("video")}
                     >
                         Video
+
+                    </Button>
+                    <Button
+                        className={`${type === "favorite" ? "bg-gray-800" : ""}`}
+                        onClick={() => setType("favorite")}
+                    >
+                        Favorite
                     </Button>
                 </Button.Group>
                 <SearchInput onSearch={setSearch} />
@@ -182,24 +226,23 @@ const Gallery = () => {
                 className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
                 style={{ height: "calc(100vh - 120px)" }}
             >
-                {loading ? (
-                    <div className="flex justify-center items-center h-screen">
-                        <Loader />
-                    </div>
-                ) : null}
-                {filteredPhoto.map((photoUrl, index) => (
-                    <ProductCard
-                        photoUrl={photoUrl}
-                        key={index}
-                        checkboxClick={setSelectedItems}
-                        checked={selectedItems}
-                        handleDownload={handleDownload}
-                        handleDelete={handleDelete}
-                        handleShare={handleShare}
-                        setDrawerOpen={setDrawerOpen}
-                        handleFavorite={handleFavorite}
-                    />
-                ))}
+                {filteredPhoto.length > 0 ? (
+                    filteredPhoto.map((photoUrl, index) => (
+                        <ProductCard
+                            photoUrl={photoUrl}
+                            key={index}
+                            checkboxClick={setSelectedItems}
+                            checked={selectedItems}
+                            handleDelete={handleDelete}
+                            handleShare={handleShare}
+                            setDrawerOpen={setDrawerOpen}
+                            handleFavorite={handleFavorite}
+                            handleDownload={handleDownload}
+                        />
+                    ))
+                ) : (
+                    <p>No photos available</p>
+                )}
             </div>
 
             {selectedItems.length > 0 && (
