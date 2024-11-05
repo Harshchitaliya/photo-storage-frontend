@@ -21,7 +21,10 @@ const Gallery = () => {
     const [type, setType] = useState("all");
     const { currentUseruid } = useAuth();
     const galleryphoto = true;
+    
     const isrecycle = false;
+    
+    
 
 
     useEffect(() => {
@@ -72,6 +75,7 @@ const Gallery = () => {
         //     setLoading(false);
         // }
     };
+
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -171,6 +175,7 @@ const Gallery = () => {
             setLoading(false);
         }
     };
+    
 
     return (
         <div>
@@ -187,7 +192,7 @@ const Gallery = () => {
                         checked={selectedItems.length === filteredPhoto.length && filteredPhoto.length > 0}
                         onChange={handleSelectAll}
                     />
-                    <label className="ml-2 text-sm text-gray-500">Select All</label>
+                    <label className="ml-2 text-sm text-gray-500 cursor-pointer" onClick={handleSelectAll}>Select All</label>
                 </div>
                 <Button.Group className="flex items-center">
                     <Button

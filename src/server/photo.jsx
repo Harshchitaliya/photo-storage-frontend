@@ -14,15 +14,15 @@ export const setAllPhoto = async (props) => {
     const photoData = userData.skus
       .flatMap((sku) =>
         sku.photos.map((photo) => {
-          // if (galleryphoto) {
-          //   if (photo.isDeleted) {
-          //     return null;
-          //   }
-          // } else {
-          //   if (!photo.isDeleted) {
-          //     return null;
-          //   }
-          // }
+          if (galleryphoto) {
+            if (photo.isDeleted) {
+              return null;
+            }
+          } else {
+            if (!photo.isDeleted) {
+              return null;
+            }
+          }
           return {
             url: photo.url,
             date: photo.date,
@@ -146,4 +146,52 @@ export const permentDelete = async (props) => {
   }
 }
 
+export const showsku = async (props) => {
+  const { currentUseruid, firestore, storage } = props;
+  const userDocRef = doc(firestore, "Users", currentUseruid);
+  const userDoc = await getDoc(userDocRef);
+  
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    const skus = userData.skus;
+    
+    const skusWithPhotos = await Promise.all(skus.map(async (sku) => {
+      // Get first non-deleted photo
+      const firstPhoto = sku.photos.find(photo => !photo.isDeleted);
+      let firstPhotoUrl = null;
+      
+      if (firstPhoto) {
+        const firstPhotoRef = ref(storage, firstPhoto.url);
+        firstPhotoUrl = await getDownloadURL(firstPhotoRef);
+        console.log(firstPhotoUrl)
+      }
+
+      // Get all non-deleted photos with download URLs
+      const activePhotos = await Promise.all(
+        sku.photos
+          .filter(photo => !photo.isDeleted)
+          .map(async (photo) => {
+            const photoRef = ref(storage, photo.url);
+            const downloadUrl = await getDownloadURL(photoRef);
+            console.log(downloadUrl)
+            return {
+              ...photo,
+              downloadUrl
+            };
+          })
+      );
+
+      return {
+        ...sku,
+        firstPhotoUrl,
+        photos: activePhotos
+      };
+    }));
+    console.log(skusWithPhotos)
+
+    return skusWithPhotos;
+  }
+  
+  return [];
+}
 
