@@ -30,31 +30,31 @@ const ProductCard = (pages) => {
       handler: handleDownload,
       icon: <DownloadIcon />,
       text: "Download",
-      onClick: () => handleDownload(photoUrl.downloadUrl),
+      onClick: () => handleDownload(photoUrl),
     },
     {
       handler: handleDelete,
       icon: <DeleteIcon />,
       text: "Delete",
-      onClick: () => handleDelete(photoUrl.url),
+      onClick: () => handleDelete(photoUrl),
     },
     {
       handler: handleShare,
       icon: <ShareIcon />,
       text: "Share",
-      onClick: () => handleShare(photoUrl.url),
+      onClick: () => handleShare(photoUrl),
     },
     {
       handler: handleFavorite,
       icon: <FavoriteIcon />,
       text: "Favorite",
-      onClick: () => handleFavorite(photoUrl.url),
+      onClick: () => handleFavorite(photoUrl),
     },
     {
       handler: handleRecycle,
       icon: <RecycleIcon />,
       text: "Recycle",
-      onClick: () => handleRecycle(photoUrl.url),
+      onClick: () => handleRecycle(photoUrl),
     },
   ].filter((item) => item.handler);
   
@@ -89,7 +89,7 @@ const ProductCard = (pages) => {
             )}
           >
             {buttonList.map(
-              ({ handler, icon, text, onClick }) =>(
+              ({ icon, text, onClick }) =>(
                   <Dropdown.Item
                     key={text}
                     className="w-40 gap-2 text-white"
