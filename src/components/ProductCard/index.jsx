@@ -114,7 +114,7 @@ const ProductCard = (pages) => {
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
             <video
-              src={photoUrl.downloadUrl}
+              src={photoUrl.photos?.[0]?.downloadUrl || photoUrl.downloadUrl}
               className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
               controls={false}
               preload="metadata"
@@ -125,7 +125,7 @@ const ProductCard = (pages) => {
           </div>
         ) : (
           <img
-            src={photoUrl.downloadUrl}
+            src={photoUrl.photos?.[0]?.downloadUrl ||photoUrl.downloadUrl}
             alt="Preview"
             className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
           />

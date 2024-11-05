@@ -1,8 +1,6 @@
 import { ref, getDownloadURL } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { deleteObject } from "firebase/storage";
-
-
 import { isVideo } from "../utils";
 
 export const setAllPhoto = async (props) => {
@@ -56,7 +54,7 @@ export const setAllPhoto = async (props) => {
 };
 
 export const deletePhoto = async (props) => {
-  const { urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems,isrecycle } = props;
+  const { urls, currentUseruid, firestore, isrecycle } = props;
   if (!urls || urls.length === 0) return;
 
   const userDocRef = doc(firestore, "Users", currentUseruid);
@@ -81,7 +79,7 @@ export const deletePhoto = async (props) => {
 };
 
 export const setFavorite = async (props) => {
-  const { urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems } = props;
+  const { urls, currentUseruid, firestore, handleShowPhoto } = props;
 
   if (!urls || urls.length === 0) return;
 
@@ -170,7 +168,9 @@ export const showsku = async (props) => {
       );
       return {
         ...sku,
-        photos: activePhotos
+        photos: activePhotos,
+        isVideo: isVideo(activePhotos[0].url),
+        allSearch: `${sku.sku} ${sku.title}`.toLowerCase(),
       };
     }));
     

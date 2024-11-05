@@ -18,13 +18,11 @@ const Recycle = () => {
     const galleryphoto = false;
     const isrecycle = true;
     
-    
     useEffect(() => {
         let filtered = photo;
         if (search) {
             filtered = photo.filter((item) => item.allSearch.includes(search));
         }
-
         setFilteredPhoto(filtered);
     }, [search, photo]);
 
@@ -45,7 +43,6 @@ const Recycle = () => {
                 firestore,
                 storage,
                 galleryphoto
-
             });
             setPhoto(allphotos);
         } catch (error) {
@@ -143,12 +140,12 @@ const Recycle = () => {
                 {filteredPhoto.length > 0 ? (
                     filteredPhoto.map((photoUrl, index) => (
                         <ProductCard
-                            photoUrl={photoUrl}
                             key={index}
-                            checkboxClick={setSelectedItems}
+                            photoUrl={photoUrl}
                             checked={selectedItems}
-                            handleDelete={handleDelete}
-                            handleRecycle={handleRecycle}
+                            checkboxClick={setSelectedItems}
+                            handleDelete={() => handleDelete(photoUrl.url)}
+                            handleRecycle={() => handleRecycle(photoUrl.url)}
                         />
                     ))
                 ) : (
@@ -161,7 +158,6 @@ const Recycle = () => {
                     <Toast>
                         <div className="flex items-center gap-4">
                             <span>{selectedItems.length} selected</span>
-
                             <Button onClick={() => handleDelete(selectedItems)}>
                                 <DeleteIcon />
                             </Button>

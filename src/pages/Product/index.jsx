@@ -213,9 +213,9 @@ const Product = () => {
               key={index}
               checkboxClick={setSelectedItems}
               checked={selectedItems}
-              handleDownload={handleDownload}
-              handleDelete={handleDelete}
-              handleShare={handleShare}
+              handleDownload={() => handleDownload(photoUrl.downloadUrl)}
+              handleDelete={() => handleDelete(photoUrl.url)}
+              handleShare={() => handleShare(photoUrl.url)}
               setDrawerOpen={setDrawerOpen}
             />
           ))}

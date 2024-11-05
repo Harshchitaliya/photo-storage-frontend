@@ -230,11 +230,11 @@ const Gallery = () => {
               key={index}
               checkboxClick={setSelectedItems}
               checked={selectedItems}
-              handleDelete={handleDelete}
-              handleShare={handleShare}
+              handleDownload={() => handleDownload(photoUrl.downloadUrl)}
+              handleDelete={() => handleDelete(photoUrl.url)}
+              handleShare={() => handleShare(photoUrl.url)}
+              handleFavorite={() => handleFavorite(photoUrl.url)}
               setDrawerOpen={setDrawerOpen}
-              handleFavorite={handleFavorite}
-              handleDownload={handleDownload}
             />
           ))
         ) : (
