@@ -56,7 +56,7 @@ const ProductCard = (pages) => {
       text: "Recycle",
       onClick: () => handleRecycle(photoUrl.url),
     },
-  ];
+  ].filter((item) => item.handler);
   
   const handleCheckboxClick = (url) => {
     if (checked.includes(url)) {
@@ -77,11 +77,7 @@ const ProductCard = (pages) => {
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
-        {(handleDownload ||
-          handleDelete ||
-          handleShare ||
-          handleFavorite ||
-          handleRecycle) && (
+        {(buttonList.length > 0) && (
           <Dropdown
             label=""
             inline
@@ -93,8 +89,7 @@ const ProductCard = (pages) => {
             )}
           >
             {buttonList.map(
-              ({ handler, icon, text, onClick }) =>
-                handler && (
+              ({ handler, icon, text, onClick }) =>(
                   <Dropdown.Item
                     key={text}
                     className="w-40 gap-2 text-white"
