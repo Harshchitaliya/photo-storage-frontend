@@ -1,217 +1,280 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
-import { ref, getDownloadURL } from "firebase/storage";
 import { useAuth } from "../../context/auth/AuthContext";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { isVideo } from "../../utils";
-import Card from "./Card";
-import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
+import ProductCard from "../../components/ProductCard";
+import { DeleteIcon, DownloadIcon, ShareIcon, CancelIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
-import DrawerComponent from "./drawer";
+import DrawerComponent from "./Drawer";
+import SearchInput from "../../components/SearchInput";
+import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
+import { ref, getDownloadURL } from "firebase/storage";
+
+const buttonList = [
+    { type: "all", label: "All" },
+    { type: "image", label: "Image" },
+    { type: "video", label: "Video" },
+    { type: "favorite", label: "Favorite" },
+];
 
 const Gallery = () => {
-  const [photo, setPhoto] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const { currentUseruid } = useAuth();
-  useEffect(() => {
-    if (drawerOpen) {
-      setSelectedItems([]);
-    }
-  }, [drawerOpen]);
-  useEffect(() => {
-    handleShowPhoto();
-  }, []);
+    const [photo, setPhoto] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [search, setSearch] = useState("");
+    const [filteredPhoto, setFilteredPhoto] = useState([]);
+    const [type, setType] = useState("all");
+    const { currentUseruid } = useAuth();
+    const galleryphoto = true;
+    const isrecycle = false;
 
-  const handleShowPhoto = useCallback(async () => {
-    if (!currentUseruid) {
-      console.log("No user ID found");
-      return;
-    }
-    setLoading(true);
+    useEffect(() => {
+        let filtered = photo;
+        if (search) {
+            filtered = photo.filter((item) => item.allSearch.includes(search));
+        }
+        if (type !== "all") {
+            filtered = filtered.filter((item) =>
+                type === "image"
+                    ? !item.isVideo
+                    : type === "video"
+                        ? item.isVideo
+                        : item.isFavorite
+            );
+        }
+        setFilteredPhoto(filtered);
+    }, [search, photo, type]);
 
-    const userDocRef = doc(firestore, "Users", currentUseruid);
-    try {
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const photoData = userData.skus
-          .flatMap((sku) =>
-            sku.photos.map((photo) => {
-              if (photo.isDeleted) {
-                return null;
-              }
-              return {
-                url: photo.url,
-                date: photo.date,
-                sku: sku.sku,
-                title: sku.title,
-                description: sku.description,
-                quantity: sku.quantity,
-                price: sku.price,
-                type: sku.type,
-                isVideo: isVideo(photo.url),
-              };
-            })
-          )
-          .filter((photo) => photo !== null);
+    useEffect(() => {
+        if (drawerOpen) {
+            setSelectedItems([]);
+        }
+    }, [drawerOpen]);
 
-        const photosWithUrls = await Promise.all(
-          photoData.map(async (photo) => {
-            const storageRef = ref(storage, photo.url);
-            const downloadUrl = await getDownloadURL(storageRef);
-            return {
-              ...photo,
-              downloadUrl,
-            };
-          })
-        );
+    useEffect(() => {
+        handleShowPhoto();
+    }, []);
 
-        setPhoto(photosWithUrls);
-      }
-    } catch (error) {
-      console.error("Error fetching photos:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [currentUseruid]);
+    const handleShowPhoto = async () => {
+        if (photo.length <= 0) {
+            // setLoading(true)
+        }
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "a") {
-        e.preventDefault();
-        handleSelectAll();
-      }
-
-      if (e.keyCode === 27) {
-        e.preventDefault();
-        setSelectedItems([]);
-      }
+        try {
+            const allphotos = await setAllPhoto({
+                currentUseruid,
+                firestore,
+                storage,
+                galleryphoto,
+            });
+            setPhoto(allphotos);
+        } catch (error) {
+            console.error("Error fetching photos:", error);
+        }
+        // } finally {
+        //     setLoading(false);
+        // }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "a") {
+                e.preventDefault();
+                handleSelectAll();
+            }
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+            if (e.keyCode === 27) {
+                e.preventDefault();
+                setSelectedItems([]);
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [photo]);
+
+    const handleSelectAll = (e) => {
+        if (e?.target?.type === "checkbox") {
+            if (e.target.checked) {
+                setSelectedItems(photo.map((item) => item.url));
+            } else {
+                setSelectedItems([]);
+            }
+        } else {
+            if (selectedItems.length === photo.length) {
+                setSelectedItems([]);
+            } else {
+                setSelectedItems(photo.map((item) => item.url));
+            }
+        }
     };
-  }, [photo]);
 
-  const handleSelectAll = (e) => {
-    if (e?.target?.type === "checkbox") {
-      if (e.target.checked) {
-        setSelectedItems(photo.map((item) => item.downloadUrl));
-      } else {
-        setSelectedItems([]);
-      }
-    } else {
-      if (selectedItems.length === photo.length) {
-        setSelectedItems([]);
-      } else {
-        setSelectedItems(photo.map((item) => item.downloadUrl));
-      }
-    }
-  };
+    const handleDelete = async (urls) => {
+        try {
+            setLoading(true);
+            await deletePhoto({ urls, currentUseruid, firestore, isrecycle });
+            await handleShowPhoto();
+            setSelectedItems([]);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const handleDelete = async (urls) => {
-    if (!urls || urls.length === 0) return;
+    const handleFavorite = async (urls) => {
+        try {
+            setLoading(true);
+            await setFavorite({
+                urls,
+                currentUseruid,
+                firestore,
+                handleShowPhoto,
+                setSelectedItems,
+            });
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    const userDocRef = doc(firestore, "Users", currentUseruid);
-    try {
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const updatedSkus = userData.skus.map((sku) => ({
-          ...sku,
-          photos: sku.photos.map((photo) => ({
-            ...photo,
-            isDeleted: urls.includes(photo.url) ? true : photo.isDeleted,
-          })),
-        }));
+    const handleDownload = async (urls) => {
+        try {
+            const urlArray = Array.isArray(urls) ? urls : [urls];
 
-        // Update the document with the modified skus
-        await updateDoc(userDocRef, {
-          skus: updatedSkus,
-        }).then(() => {
-          handleShowPhoto();
-          setSelectedItems([]);
-          alert("Photos deleted successfully");
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting photos:", error);
-    }
-  };
+            for (const url of urlArray) {
+                const storageRef = ref(storage, url);
+                try {
+                    setLoading(true);
+                    const downloadUrl = await getDownloadURL(storageRef);
+                    const filename = downloadUrl.split("/").pop();
+                    const atag = document.createElement("a");
+                    atag.href = downloadUrl;
+                    atag.setAttribute("download", filename);
+                    document.body.appendChild(atag);
+                    atag.click();
+                    document.body.removeChild(atag);
+                } catch (error) {
+                    console.error(`Error downloading ${url}:`, error);
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const handleShare = (url) => {
-    console.log(url);
-  };
-  const handleDownload = (url) => {
-    console.log(url);
-  };
+    const handleShare = async (url) => {
+        try {
+            console.log(url);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  return (
-    <div>
-      {photo.length ? (
-        <div className="flex items-center p-4">
-          <Checkbox
-            checked={selectedItems.length === photo.length}
-            onChange={handleSelectAll}
-          />
-          <label className="ml-2 text-sm text-gray-500">Select All</label>
-        </div>
-      ) : null}
+    return (
+        <div>
+            {loading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                    <Loader />
+                </div>
+            )}
 
-      <div className="flex flex-wrap justify-center items-center gap-6 mt-8">
-        {loading ? (
-          <div className="flex justify-center items-center h-screen">
-            <Loader />
-          </div>
-        ) : null}
-        {photo.map((photoUrl, index) => (
-          <Card
-            photoUrl={photoUrl}
-            key={index}
-            checkboxClick={setSelectedItems}
-            checked={selectedItems}
-            handleDownload={handleDownload}
-            handleDelete={handleDelete}
-            handleShare={handleShare}
-            setDrawerOpen={setDrawerOpen}
-          />
-        ))}
-      </div>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center p-2">
+                    <Checkbox
+                        className="cursor-pointer"
+                        checked={
+                            selectedItems.length === filteredPhoto.length &&
+                            filteredPhoto.length > 0
+                        }
+                        onChange={handleSelectAll}
+                    />
+                    <label
+                        className="ml-2 text-sm text-gray-500 cursor-pointer"
+                        onClick={handleSelectAll}
+                    >
+                        Select All
+                    </label>
+                </div>
+                <Button.Group className="flex items-center">
+                    {buttonList.map(({ type: buttonType, label, className }) => (
+                        <Button
+                            key={buttonType}
 
-      {selectedItems.length > 0 && (
-        <div className="fixed bottom-4 right-4">
-          <Toast>
-            <div className="flex items-center gap-4">
-              <span>{selectedItems.length} selected</span>
-              <Button onClick={() => handleDownload(selectedItems)}>
-                <DownloadIcon />
-              </Button>
-              <Button onClick={() => handleDelete(selectedItems)}>
-                <DeleteIcon />
-              </Button>
-              <Button onClick={() => handleShare(selectedItems)}>
-                <ShareIcon />
-              </Button>
+                            className={` ${type === buttonType ? "dark:bg-gray-700" : ""
+                                }`}
+                            onClick={() => setType(buttonType)}
+                        >
+                            {label}
+                        </Button>
+                    ))}
+                </Button.Group>
+                <SearchInput onSearch={setSearch} />
             </div>
-          </Toast>
-        </div>
-      )}
-      {drawerOpen && (
-        <DrawerComponent
-          drawerOpen={drawerOpen}
-          setDrawerOpen={setDrawerOpen}
-          handleDownload={handleDownload}
-          handleDelete={handleDelete}
-          handleShare={handleShare}
-        />
-      )}
-    </div>
-  );
-};
 
+            <div
+                className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
+                style={{ height: "calc(100vh - 120px)" }}
+            >
+                {filteredPhoto.length > 0 ? (
+                    filteredPhoto.map((photoUrl, index) => (
+                        <ProductCard
+                            photoUrl={photoUrl}
+                            key={index}
+                            checkboxClick={setSelectedItems}
+                            checked={selectedItems}
+                            handleDelete={handleDelete}
+                            handleShare={handleShare}
+                            setDrawerOpen={setDrawerOpen}
+                            handleFavorite={handleFavorite}
+                            handleDownload={handleDownload}
+                        />
+                    ))
+                ) : (
+                    <p>No photos available</p>
+                )}
+            </div>
+
+            {selectedItems.length > 0 && (
+                <div className="fixed bottom-4 right-4">
+                    <Toast>
+                        <div className="flex items-center gap-4">
+                            <span>{selectedItems.length} selected</span>
+                            <Button size="sm" onClick={() => handleDownload(selectedItems)}>
+                                <DownloadIcon />
+                            </Button>
+                            <Button size="sm" onClick={() => handleShare(selectedItems)}>
+                                <ShareIcon />
+                            </Button>
+                            <Button size="sm" color="failure" onClick={() => handleDelete(selectedItems)}>
+                                <DeleteIcon />
+                            </Button>
+                        
+                        <Button size="sm" onClick={() => setSelectedItems([])}>
+                            <CancelIcon />
+                        </Button>
+
+                        </div>
+                    </Toast>
+                </div>
+            )}
+            {drawerOpen && (
+                <DrawerComponent
+                    drawerOpen={drawerOpen}
+                    setDrawerOpen={setDrawerOpen}
+                    handleDownload={handleDownload}
+                    handleDelete={handleDelete}
+                    handleShare={handleShare}
+                />
+            )}
+        </div>
+    );
+};
 export default Gallery;

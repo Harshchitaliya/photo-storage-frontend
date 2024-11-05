@@ -121,8 +121,8 @@ const Sidebar = (props) => {
       <Portal wrapperId="sidebar-icon">
         <button
           onClick={toggleSidebar}
-          className={`w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 z-50 ${
-            isOpen ? "absolute top-5 left-64" : "fixed top-5 left-14"
+          className={`w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 z-20 ${
+            isOpen ? "absolute top-5 left-245" : "fixed top-5 left-14"
           }`}
         >
           <span
@@ -135,7 +135,7 @@ const Sidebar = (props) => {
         </button>
       </Portal>
       <aside
-        className={`fixed top-0 left-0 z-40  h-screen transition-transform ${
+        className={`fixed top-0 left-0 z-10  h-screen transition-transform ${
           isOpen ? "translate-x-0 w-64" : "-translate-x-full w-16"
         } sm:translate-x-0`}
       >
