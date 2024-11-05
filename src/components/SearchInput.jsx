@@ -1,5 +1,20 @@
+import { useEffect } from "react";
 import { SearchIcon, FilterIcon } from "./Icons";
 const SearchInput = ({ onSearch, filter }) => {
+  useEffect(() => {
+    document.getElementById("search").focus();
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        document.getElementById("search").focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
   return (
     <div
       className=" flex items-center justify-between px-3 text-lg text-gray-200 dark:bg-gray-800 rounded-full 
@@ -12,7 +27,6 @@ const SearchInput = ({ onSearch, filter }) => {
         id="search"
         className="dark:bg-gray-800 border-none focus:ring-0 "
         onChange={(e) => {
-          e.preventDefault();
           onSearch?.(e.target.value);
         }}
       />

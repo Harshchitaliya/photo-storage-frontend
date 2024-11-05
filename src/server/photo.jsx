@@ -14,15 +14,15 @@ export const setAllPhoto = async (props) => {
     const photoData = userData.skus
       .flatMap((sku) =>
         sku.photos.map((photo) => {
-          if (galleryphoto) {
-            if (photo.isDeleted) {
-              return null;
-            }
-          } else {
-            if (!photo.isDeleted) {
-              return null;
-            }
-          }
+          // if (galleryphoto) {
+          //   if (photo.isDeleted) {
+          //     return null;
+          //   }
+          // } else {
+          //   if (!photo.isDeleted) {
+          //     return null;
+          //   }
+          // }
           return {
             url: photo.url,
             date: photo.date,
