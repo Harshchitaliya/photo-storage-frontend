@@ -1,35 +1,53 @@
-
 import { useAuth } from "../../context/auth/AuthContext";
 import { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
-import { ref, getDownloadURL } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { isVideo } from "../../utils";
 import ProductCard from "../../components/ProductCard";
 import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
-import { Button, Checkbox, Toast } from "flowbite-react";
+import { Button, Checkbox, Toast, Table } from "flowbite-react";
 import Loader from "../../components/Loader";
-// import DrawerComponent from "./drawer";
 import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto } from "../../server/photo";
+import TableView from "./TableView";
+import moment from "moment";
 const Product = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const [allFilter, setAllFilter] = useState({});
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
+  console.log("allFilter", photo);
   useEffect(() => {
     let filtered = photo;
-    if (search) {
-      filtered = photo.filter((item) => item.allSearch.includes(search));
+    if (allFilter.search) {
+      filtered = photo.filter((item) =>
+        item.allSearch.includes(allFilter.search)
+      );
+    }
+    if (allFilter.type) {
+      filtered = filtered.filter((item) => item.type === allFilter.type);
+    }
+    if (allFilter.price) {
+      filtered = filtered.filter((item) => item.price === allFilter.price);
+    }
+    if (allFilter.quantity) {
+      filtered = filtered.filter(
+        (item) => item.quantity === allFilter.quantity
+      );
+    }
+    if (allFilter.date) {
+      filtered = filtered.filter((item) =>
+        moment(item.date).isSame(allFilter.date, "day")
+      );
     }
     setFilteredPhoto(filtered);
-  }, [search, photo]);
+  }, [allFilter, photo]);
+
   const { currentUseruid } = useAuth();
+
   useEffect(() => {
     if (drawerOpen) {
       setSelectedItems([]);
@@ -121,7 +139,7 @@ const Product = () => {
       console.error("Error deleting photos:", error);
     }
   };
-
+  console.log("filteredPhoto", filteredPhoto);
   const handleShare = (url) => {
     console.log(url);
   };
@@ -130,37 +148,46 @@ const Product = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center p-2">
+    <div className="p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
           <Checkbox
-            checked={selectedItems.length === filteredPhoto.length && filteredPhoto.length > 0}
+            checked={
+              selectedItems.length === filteredPhoto.length &&
+              filteredPhoto.length > 0
+            }
             onChange={handleSelectAll}
           />
           <label className="ml-2 text-sm text-gray-500">Select All</label>
         </div>
-        <SearchInput onSearch={setSearch} filter={() => setFilterModalOpen(true)} />
-      </div>
-      <div className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto" style={{ height: "calc(100vh - 120px)" }}>
-        {loading ? (
-          <div className="flex justify-center items-center h-screen">
-            <Loader />
-          </div>
-        ) : null}
-        {filteredPhoto.map((photoUrl, index) => (
-          <ProductCard
-            photoUrl={photoUrl}
-            key={index}
-            checkboxClick={setSelectedItems}
-            checked={selectedItems}
-            handleDownload={handleDownload}
-            handleDelete={handleDelete}
-            handleShare={handleShare}
-            setDrawerOpen={setDrawerOpen}
-          />
-        ))}
+        <SearchInput
+          onSearch={(e) => setAllFilter({ ...allFilter, search: e })}
+          filter={() => setFilterModalOpen(true)}
+        />
       </div>
 
+      <TableView
+        filteredPhoto={filteredPhoto}
+        selectedItems={selectedItems}
+        handleSelectAll={handleSelectAll}
+        handleShare={handleShare}
+        handleDownload={handleDownload}
+        handleDelete={handleDelete}
+        loading={loading}
+      />
+
+      {filteredPhoto.map((photoUrl, index) => (
+        <ProductCard
+          photoUrl={photoUrl}
+          key={index}
+          checkboxClick={setSelectedItems}
+          checked={selectedItems}
+          handleDownload={handleDownload}
+          handleDelete={handleDelete}
+          handleShare={handleShare}
+          setDrawerOpen={setDrawerOpen}
+        />
+      ))}
       {selectedItems.length > 0 && (
         <div className="fixed bottom-4 right-4">
           <Toast>
@@ -179,16 +206,12 @@ const Product = () => {
           </Toast>
         </div>
       )}
-      {/* {drawerOpen && (
-        <DrawerComponent
-          drawerOpen={drawerOpen}
-          setDrawerOpen={setDrawerOpen}
-          handleDownload={handleDownload}
-          handleDelete={handleDelete}
-          handleShare={handleShare}
-        />
-      )} */}
-      {filterModalOpen && <FilterModal isOpen={filterModalOpen} setIsOpen={setFilterModalOpen} />}
+
+      <FilterModal
+        isOpen={filterModalOpen}
+        setIsOpen={setFilterModalOpen}
+        onApply={setAllFilter}
+      />
     </div>
   );
 };

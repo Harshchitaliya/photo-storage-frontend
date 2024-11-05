@@ -1,21 +1,128 @@
-import { Modal, Button } from "flowbite-react";
-const FilterModal = ({ isOpen, setIsOpen, reset }) => {
+import { useState, useRef, useEffect } from "react";
+import {
+  Modal,
+  Button,
+  Label,
+  Datepicker,
+  Select,
+  TextInput,
+} from "flowbite-react";
+import Portal from "../../components/Portal/Portal";
+// import { Option } from "../../utils/Option";
+
+const FilterModal = ({ isOpen, setIsOpen,  defaultFilters, onApply}) => {
+  const [allFilters, setAllFilters] = useState(defaultFilters || {});
+  const [position, setPosition] = useState({});
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+
+    const updatePosition = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setPosition({
+          top: rect.top + window.scrollY,
+          left: rect.left + window.scrollX,
+        });
+      }
+    };
+    updatePosition();
+    setTimeout(updatePosition, 100);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [isOpen]);
+
   return (
     <Modal show={isOpen} onClose={() => setIsOpen(false)}>
-      <Modal.Body></Modal.Body>
+      <Modal.Body>
+        <div>
+          <Label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Default label
+          </Label>
+          <div className="relative" ref={containerRef}>
+            {position && (
+              <Portal position={position} wrapperId="datepicker">
+                <Datepicker
+                  value={allFilters.date}
+                  onChange={(e) => setAllFilters({ ...allFilters, date: e })}
+                  maxDate={new Date()}
+                />
+              </Portal>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-14">
+          <Label
+            htmlFor="type"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Type
+          </Label>
+          <Select
+            id="type"
+            value={allFilters.type}
+            onChange={(e) =>
+              setAllFilters({ ...allFilters, type: e.target.value })
+            }
+          >
+            <option value="US">United States</option>
+            <option value="CA">Canada</option>
+            <option value="FR">France</option>
+            <option value="DE">Germany</option>
+            <option value="other">Other</option>
+          </Select>
+        </div>
+        <div className="mt-4">
+          <Label
+            htmlFor="price"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Price
+          </Label>
+          <TextInput
+            id="price"
+            type="number"
+            value={allFilters.price}
+            onChange={(e) =>
+              setAllFilters({ ...allFilters, price: e.target.value })
+            }
+          />
+        </div>
+        <div className="mt-4">
+          <Label
+            htmlFor="quantity"
+            value={allFilters.quantity}
+            onChange={(e) =>
+              setAllFilters({ ...allFilters, quantity: e.target.value })
+            }
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Quantity
+          </Label>
+          <TextInput id="quantity" type="number" />
+        </div>
+      </Modal.Body>
       <Modal.Footer className="flex justify-between border-t-0">
-        <Button onClick={() => setIsOpen(false)}>I accept</Button>
+        <Button onClick={() => setIsOpen(false)}>Close</Button>
         <div className="flex gap-2">
-          {reset && (
             <Button
               onClick={() => {
-                reset(), setIsOpen(false);
+                onApply?.(allFilters);
+                setIsOpen(false);
               }}
             >
               Reset
             </Button>
-          )}
-          <Button color="gray" onClick={() => setIsOpen(false)}>
+          <Button
+            color="light"
+            onClick={() => {
+              onApply?.(allFilters);
+              setIsOpen(false);
+            }}
+          >
             Search
           </Button>
         </div>

@@ -1,10 +1,12 @@
 
 import Card from "./Card";
 import Spinner from "./Spinner";
+import Modal from "./Modal";
 
 const FlowbiteTheme = {
-    ...Card,
-    ...Spinner,
-}
+  ...Card,
+  ...Spinner,
+  ...Modal,
+};
 
-export default FlowbiteTheme; 
+export default FlowbiteTheme;
