@@ -140,13 +140,14 @@ const Gallery = () => {
     };
 
     const handleDownload = async (urls) => {
+        setLoading(true);
         try {
             const urlArray = Array.isArray(urls) ? urls : [urls];
 
             for (const url of urlArray) {
                 const storageRef = ref(storage, url);
                 try {
-                    setLoading(true);
+                    
                     const downloadUrl = await getDownloadURL(storageRef);
                     const filename = downloadUrl.split("/").pop();
                     const atag = document.createElement("a");
@@ -167,6 +168,7 @@ const Gallery = () => {
     };
 
     const handleShare = async (url) => {
+        setLoading(true);
         try {
             console.log(url);
         } catch (error) {
@@ -195,7 +197,7 @@ const Gallery = () => {
                         onChange={handleSelectAll}
                     />
                     <label
-                        className="ml-2 text-sm text-gray-500 cursor-pointer"
+                        className="ml-2 text-sm text-gray-500 cursor-pointer sm:text-base hidden sm:block"
                         onClick={handleSelectAll}
                     >
                         Select All

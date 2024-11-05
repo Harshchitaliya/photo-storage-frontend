@@ -62,7 +62,7 @@ const TableView = (props) => {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto my-4 sm:w-full w-11/12">
       <Table className="static rounded-b-lg">
         <Table.Head>
           <Table.HeadCell className="w-16">

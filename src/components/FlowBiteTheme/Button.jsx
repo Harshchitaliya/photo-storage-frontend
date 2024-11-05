@@ -106,10 +106,10 @@ const Button = {
     },
     size: {
       xs: "px-2 py-1 text-xs",
-      sm: "px-3 py-1.5 text-sm",
-      md: "px-4 py-2 text-sm",
-      lg: "px-5 py-2.5 text-base",
-      xl: "px-6 py-3 text-base",
+      sm: "sm:px-3 px-2 sm:py-1.5 py-1 text-sm",
+      md: "sm:px-4 px-2 sm:py-2 py-1 text-sm",
+      lg: "sm:px-5 px-3 sm:py-2.5 py-1.5 text-base",
+      xl: "sm:px-6 px-4 sm:py-3 py-2 text-base",
     },
   },
 };

@@ -136,7 +136,7 @@ const Recycle = () => {
           <Loader />
         </div>
       )}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center sm:justify-between  gap-2">
         <div className="flex items-center p-2">
           <Checkbox
             className="cursor-pointer"
@@ -147,7 +147,7 @@ const Recycle = () => {
             onChange={handleSelectAll}
           />
           <label
-            className="ml-2 text-sm text-gray-500 cursor-pointer"
+            className="ml-2 text-sm text-gray-500 cursor-pointer sm:text-base hidden sm:block"
             onClick={handleSelectAll}
           >
             Select All
@@ -189,12 +189,11 @@ const Recycle = () => {
       </div>
 
       <Selectaction
-                selectedItems={selectedItems}
-                handleCancel={() => setSelectedItems([])}
-                handleDelete={handleDelete}
-                handleRecycle={handleRecycle}
-            />
-      
+        selectedItems={selectedItems}
+        handleCancel={() => setSelectedItems([])}
+        handleDelete={handleDelete}
+        handleRecycle={handleRecycle}
+      />
     </div>
   );
 };
