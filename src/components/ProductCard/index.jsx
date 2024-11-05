@@ -8,6 +8,7 @@ import {
   ShareIcon,
   DownloadIcon,
   FavoriteIcon,
+  RecycleIcon,
 } from "../Icons";
 import { Card, Checkbox, Dropdown } from "flowbite-react";
 
@@ -21,6 +22,7 @@ const ProductCard = (pages) => {
     handleShare,
     handleFavorite,
     setDrawerOpen,
+    handleRecycle,
   } = pages;
   const handleCheckboxClick = (url) => {
     if (checked.includes(url)) {
@@ -40,13 +42,13 @@ const ProductCard = (pages) => {
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
-        {(handleDownload || handleDelete || handleShare || handleFavorite) && (
+        {(handleDownload || handleDelete || handleShare || handleFavorite || handleRecycle) && (
           <Dropdown
             label=""
             inline
-            className="border-0"
+            className="border-0 cursor-pointer"
             renderTrigger={() => (
-              <span>
+              <span className="cursor-pointer">
                 <MoreoptionsIcon />
               </span>
             )}
@@ -83,12 +85,20 @@ const ProductCard = (pages) => {
                 <FavoriteIcon /> Favorite
               </Dropdown.Item>
             )}
+            {handleRecycle && (
+              <Dropdown.Item
+                className="w-40 gap-2 text-white "
+                onClick={() => handleRecycle(photoUrl.url)}
+              >
+                <RecycleIcon /> Recycle
+              </Dropdown.Item>
+            )}
           </Dropdown>
         )}
       </div>
       <div
         className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
-        onClick={() => setDrawerOpen(photoUrl)}
+        onClick={() => setDrawerOpen?.(photoUrl)}
       >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
@@ -113,8 +123,7 @@ const ProductCard = (pages) => {
       <div className="text-gray-400 text-sm flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {photoUrl.isVideo ? <VideoIcon /> : <ImageIcon />}•{" "}
-          {moment(photoUrl.date).format("MMM DD, YYYY")}
-          {console.log(photoUrl.isFavorite)}
+          {moment(photoUrl.date).format("MMM DD, YYYY")}        
           <span className="text-white">{photoUrl.type}</span>
         </div>
         {photoUrl.isFavorite && <FavoriteIcon />}

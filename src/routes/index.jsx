@@ -5,8 +5,9 @@ import Login from '../pages/Login';
 import { useAuth } from '../context/auth/AuthContext.jsx';
 import Gallery from '../pages/Gallery';
 import Upload from '../pages/Gallery/upload';
-import Product from '../pages/Product/index.jsx';
-import Loader from '../components/Loader/index.jsx';
+import Product from '../pages/Product';
+import Loader from '../components/Loader';
+import Recycle from '../pages/Recycle';
 
 function AppRoutes() {
   const { loading , currentUseruid } = useAuth();
@@ -36,6 +37,7 @@ function AppRoutes() {
       <Route path="/gallery" element={currentUseruid ? <Gallery /> : <Navigate to="/login" />} />
       <Route path="/upload" element={currentUseruid ? <Upload /> : <Navigate to="/login" />} />
       <Route path="/products" element={currentUseruid ? <Product /> : <Navigate to="/login" />} />
+      <Route path="/recycle" element={currentUseruid ? <Recycle /> : <Navigate to="/login" />} />
     </Routes>
   );
 }

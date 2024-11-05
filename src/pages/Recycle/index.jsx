@@ -2,45 +2,29 @@ import React, { useState, useEffect } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { useAuth } from "../../context/auth/AuthContext";
 import ProductCard from "../../components/ProductCard";
-import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
+import { DeleteIcon, RecycleIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
-import DrawerComponent from "./drawer";
 import SearchInput from "../../components/SearchInput";
-import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
-import { ref, getDownloadURL } from "firebase/storage";
+import { showRecycle, permentDelete } from "../../server";
 
-const Gallery = () => {
+const Recycle = () => {
     const [photo, setPhoto] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [drawerOpen, setDrawerOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredPhoto, setFilteredPhoto] = useState([]);
-    const [type, setType] = useState("all");
     const { currentUseruid } = useAuth();
     useEffect(() => {
         let filtered = photo;
         if (search) {
             filtered = photo.filter((item) => item.allSearch.includes(search));
         }
-        if (type !== "all") {
-            filtered = filtered.filter((item) =>
-                type === "image"
-                    ? !item.isVideo
-                    : type === "video"
-                        ? item.isVideo
-                        : true
-            );
-        }
+      
         setFilteredPhoto(filtered);
-    }, [search, photo, type]);
+    }, [search, photo]);
 
-    useEffect(() => {
-        if (drawerOpen) {
-            setSelectedItems([]);
-        }
-    }, [drawerOpen]);
+ 
 
     useEffect(() => {
         handleShowPhoto();
@@ -52,7 +36,7 @@ const Gallery = () => {
         }
 
         try {
-            const allphotos = await setAllPhoto({
+            const allphotos = await showRecycle({
                 currentUseruid,
                 firestore,
                 storage,
@@ -99,47 +83,22 @@ const Gallery = () => {
         }
     };
 
-    const handleDelete = async (urls) => {
+    const handleDelete = async (url) => {
+        const urls = url;
+        console.log(currentUseruid);
         try{
-            await deletePhoto({ urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems })
+            await permentDelete({ urls, currentUseruid, firestore, storage })
             handleShowPhoto();
-        } catch(error){
-            console.log(error)
-        }
-    }
-
-    const handleFavorite = async (urls) => {
-        try{
-            await setFavorite({ urls, currentUseruid, firestore, handleShowPhoto, setSelectedItems })
-        } catch(error){
-            console.log(error)
+            setSelectedItems([]);
+        }catch(error){
+            console.error("Error deleting photos:", error);
         }
 
     }
 
-    const handleDownload = async (urls) => {
-        const urlArray = Array.isArray(urls) ? urls : [urls];
+    const handleRecycle = async (urls) => {
         
-        for (const url of urlArray) {
-            const storageRef = ref(storage, url);
-            try {
-                const downloadUrl = await getDownloadURL(storageRef);
-                const filename = downloadUrl.split('/').pop();
-                const atag = document.createElement('a');
-                atag.href = downloadUrl;
-                atag.setAttribute('download', filename);
-                document.body.appendChild(atag);
-                atag.click();
-                document.body.removeChild(atag);
-            } catch (error) {
-                console.error(`Error downloading ${url}:`, error);
-            }
-        }
-    };
-
-    const handleShare = async (url) => {
-        console.log(url);
-    };
+    }
 
     return (
         <div>
@@ -152,28 +111,7 @@ const Gallery = () => {
                     />
                     <label className="ml-2 text-sm text-gray-500">Select All</label>
                 </div>
-                <Button.Group className="flex items-center">
-                    <Button
-                        className={`rounded-r-none ${type === "all" ? "bg-gray-800" : ""
-                            }`}
-                        onClick={() => setType("all")}
-                    >
-                        All
-                    </Button>
-                    <Button
-                        className={`rounded-l-none ${type === "image" ? "bg-gray-800" : ""
-                            }`}
-                        onClick={() => setType("image")}
-                    >
-                        Image
-                    </Button>
-                    <Button
-                        className={`${type === "video" ? "bg-gray-800" : ""}`}
-                        onClick={() => setType("video")}
-                    >
-                        Video
-                    </Button>
-                </Button.Group>
+             
                 <SearchInput onSearch={setSearch} />
             </div>
 
@@ -193,11 +131,8 @@ const Gallery = () => {
                         key={index}
                         checkboxClick={setSelectedItems}
                         checked={selectedItems}
-                        handleDownload={handleDownload}
                         handleDelete={handleDelete}
-                        handleShare={handleShare}
-                        setDrawerOpen={setDrawerOpen}
-                        handleFavorite={handleFavorite}
+                        handleRecycle={handleRecycle}
                     />
                 ))}
             </div>
@@ -207,29 +142,20 @@ const Gallery = () => {
                     <Toast>
                         <div className="flex items-center gap-4">
                             <span>{selectedItems.length} selected</span>
-                            <Button onClick={() => handleDownload(selectedItems)}>
-                                <DownloadIcon />
-                            </Button>
+                          
                             <Button onClick={() => handleDelete(selectedItems)}>
                                 <DeleteIcon />
                             </Button>
-                            <Button onClick={() => handleShare(selectedItems)}>
-                                <ShareIcon />
+                            <Button onClick={() => handleRecycle(selectedItems)}>
+                                <RecycleIcon />
                             </Button>
+
                         </div>
                     </Toast>
                 </div>
             )}
-            {drawerOpen && (
-                <DrawerComponent
-                    drawerOpen={drawerOpen}
-                    setDrawerOpen={setDrawerOpen}
-                    handleDownload={handleDownload}
-                    handleDelete={handleDelete}
-                    handleShare={handleShare}
-                />
-            )}
+            
         </div>
     );
 };
-export default Gallery;
+export default Recycle;
