@@ -3,9 +3,14 @@ import { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import ProductCard from "../../components/ProductCard";
-import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
+import {
+  DeleteIcon,
+  DownloadIcon,
+  ShareIcon,
+  TableIcon,
+  GridIcon,
+} from "../../components/Icons";
 import { Button, Checkbox, Toast, Table } from "flowbite-react";
-import Loader from "../../components/Loader";
 import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto } from "../../server/photo";
@@ -19,6 +24,7 @@ const Product = () => {
   const [allFilter, setAllFilter] = useState({});
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
+  const [viewType, setViewType] = useState("grid");
   console.log("allFilter", photo);
   useEffect(() => {
     let filtered = photo;
@@ -160,34 +166,53 @@ const Product = () => {
           />
           <label className="ml-2 text-sm text-gray-500">Select All</label>
         </div>
-        <SearchInput
-          onSearch={(e) => setAllFilter({ ...allFilter, search: e })}
-          filter={() => setFilterModalOpen(true)}
-        />
+        <div className="flex items-center">
+          <Button.Group>
+            <Button onClick={() => setViewType("table")}>
+              <TableIcon />
+            </Button>
+            <Button onClick={() => setViewType("grid")}>
+              <GridIcon />
+            </Button>
+          </Button.Group>
+          <SearchInput
+            onSearch={(e) => setAllFilter({ ...allFilter, search: e })}
+            filter={() => setFilterModalOpen(true)}
+          />
+        </div>
       </div>
-
-      <TableView
-        filteredPhoto={filteredPhoto}
-        selectedItems={selectedItems}
-        handleSelectAll={handleSelectAll}
-        handleShare={handleShare}
-        handleDownload={handleDownload}
-        handleDelete={handleDelete}
-        loading={loading}
-      />
-
-      {filteredPhoto.map((photoUrl, index) => (
-        <ProductCard
-          photoUrl={photoUrl}
-          key={index}
-          checkboxClick={setSelectedItems}
-          checked={selectedItems}
+      {viewType === "table" && (
+        <TableView
+          filteredPhoto={filteredPhoto}
+          selectedItems={selectedItems}
+          handleSelectAll={handleSelectAll}
+          handleShare={handleShare}
           handleDownload={handleDownload}
           handleDelete={handleDelete}
-          handleShare={handleShare}
-          setDrawerOpen={setDrawerOpen}
+          loading={loading}
+          setSelectedItems={setSelectedItems} 
         />
-      ))}
+      )}
+
+      {viewType === "grid" && (
+        <div
+          className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
+          style={{ height: "calc(100vh - 120px)" }}
+        >
+          {filteredPhoto.map((photoUrl, index) => (
+            <ProductCard
+              photoUrl={photoUrl}
+              key={index}
+              checkboxClick={setSelectedItems}
+              checked={selectedItems}
+              handleDownload={handleDownload}
+              handleDelete={handleDelete}
+              handleShare={handleShare}
+              setDrawerOpen={setDrawerOpen}
+            />
+          ))}
+        </div>
+      )}
       {selectedItems.length > 0 && (
         <div className="fixed bottom-4 right-4">
           <Toast>

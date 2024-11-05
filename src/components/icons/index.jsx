@@ -218,7 +218,7 @@ export const FavoriteIcon = (styles = {}) => (
   </svg>
 );
 
-export const TableIcon = () => (
+export const TableIcon = (styles = {}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -229,6 +229,7 @@ export const TableIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    {...styles}
   >
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
     <line x1="3" y1="9" x2="21" y2="9"></line>
@@ -237,7 +238,7 @@ export const TableIcon = () => (
   </svg>
 );
 
-export const GridIcon = () => (
+export const GridIcon = (styles = {}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -248,10 +249,63 @@ export const GridIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    {...styles}
   >
     <rect x="3" y="3" width="7" height="7"></rect>
     <rect x="14" y="3" width="7" height="7"></rect>
     <rect x="14" y="14" width="7" height="7"></rect>
     <rect x="3" y="14" width="7" height="7"></rect>
+  </svg>
+);
+
+
+export const SortDefaultIcon = (styles = {}) => (
+  <svg
+    className="w-4 h-4 inline-block ml-1 opacity-40"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    {...styles}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 7l5-5 5 5m0 10l-5 5-5-5"
+    />
+  </svg>
+);
+
+export const SortAscIcon = (styles = {}) => (
+  <svg
+    className="w-4 h-4 inline-block ml-1"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    {...styles}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 11l5-5 5 5"
+    />
+  </svg>
+);
+
+export const SortDescIcon = (styles = {}) => (
+  <svg
+    className="w-4 h-4 inline-block ml-1"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    {...styles}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 13l5 5 5-5"
+    />
   </svg>
 );

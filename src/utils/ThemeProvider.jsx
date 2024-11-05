@@ -1,25 +1,28 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext();
 
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('dark');
+import { Flowbite, theme as flowbiteTheme } from "flowbite-react";
+import CustomFlowbiteTheme from "../components/FlowBiteTheme";
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
-    // Set dark mode on initial load
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.add("dark");
   }, []);
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    document.documentElement.classList.toggle('dark');
+    setTheme(theme === "dark" ? "light" : "dark");
+    document.documentElement.classList.toggle("dark");
   };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
+      <Flowbite theme={{ theme: { ...flowbiteTheme, ...CustomFlowbiteTheme } }}>
+        {children}
+      </Flowbite>
     </ThemeContext.Provider>
   );
-}
+};
 
-export const useTheme = () => useContext(ThemeContext); 
+export const useTheme = () => useContext(ThemeContext);
