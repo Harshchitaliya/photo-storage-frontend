@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { useAuth } from "../../context/auth/AuthContext";
 import ProductCard from "../../components/ProductCard";
-import { DeleteIcon, RecycleIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, permentDelete, deletePhoto } from "../../server";
-import { CancelIcon } from "../../components/Icons";
+import Selectaction from "../../components/Selectaction";
 
 const buttonList = [
   { type: "all", label: "All" },
@@ -189,28 +188,13 @@ const Recycle = () => {
         )}
       </div>
 
-      {selectedItems.length > 0 && (
-        <div className="fixed bottom-4 right-4">
-          <Toast>
-            <div className="flex items-center gap-4">
-              <span>{selectedItems.length} selected</span>
-              <Button size="sm" onClick={() => handleRecycle(selectedItems)}>
-                <RecycleIcon />
-              </Button>
-              <Button
-                size="sm"
-                color="failure"
-                onClick={() => handleDelete(selectedItems)}
-              >
-                <DeleteIcon />
-              </Button>
-              <Button size="sm" onClick={() => setSelectedItems([])}>
-                <CancelIcon />
-              </Button>
-            </div>
-          </Toast>
-        </div>
-      )}
+      <Selectaction
+                selectedItems={selectedItems}
+                handleCancel={() => setSelectedItems([])}
+                handleDelete={handleDelete}
+                handleRecycle={handleRecycle}
+            />
+      
     </div>
   );
 };

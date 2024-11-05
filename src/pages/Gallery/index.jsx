@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { useAuth } from "../../context/auth/AuthContext";
 import ProductCard from "../../components/ProductCard";
-import { DeleteIcon, DownloadIcon, ShareIcon, CancelIcon } from "../../components/Icons";
-import { Button, Checkbox, Toast } from "flowbite-react";
+import { Button, Checkbox } from "flowbite-react";
 import Loader from "../../components/Loader";
 import DrawerComponent from "./Drawer";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
 import { ref, getDownloadURL } from "firebase/storage";
+import Selectaction from "../../components/Selectaction";
 
 const buttonList = [
     { type: "all", label: "All" },
@@ -57,9 +57,7 @@ const Gallery = () => {
     }, []);
 
     const handleShowPhoto = async () => {
-        if (photo.length <= 0) {
-            // setLoading(true)
-        }
+        setLoading(true)
 
         try {
             const allphotos = await setAllPhoto({
@@ -72,9 +70,9 @@ const Gallery = () => {
         } catch (error) {
             console.error("Error fetching photos:", error);
         }
-        // } finally {
-        //     setLoading(false);
-        // }
+        finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -242,29 +240,14 @@ const Gallery = () => {
                 )}
             </div>
 
-            {selectedItems.length > 0 && (
-                <div className="fixed bottom-4 right-4">
-                    <Toast>
-                        <div className="flex items-center gap-4">
-                            <span>{selectedItems.length} selected</span>
-                            <Button size="sm" onClick={() => handleDownload(selectedItems)}>
-                                <DownloadIcon />
-                            </Button>
-                            <Button size="sm" onClick={() => handleShare(selectedItems)}>
-                                <ShareIcon />
-                            </Button>
-                            <Button size="sm" color="failure" onClick={() => handleDelete(selectedItems)}>
-                                <DeleteIcon />
-                            </Button>
-                        
-                        <Button size="sm" onClick={() => setSelectedItems([])}>
-                            <CancelIcon />
-                        </Button>
+            <Selectaction
+                selectedItems={selectedItems}
+                handleCancel={() => setSelectedItems([])}
+                handleDelete={handleDelete}
+                handleShare={handleShare}
+                handleDownload={handleDownload}
+            />
 
-                        </div>
-                    </Toast>
-                </div>
-            )}
             {drawerOpen && (
                 <DrawerComponent
                     drawerOpen={drawerOpen}
