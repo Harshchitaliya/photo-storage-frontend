@@ -16,6 +16,10 @@ import SearchInput from "../../components/SearchInput";
 import { setAllPhoto } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
+const buttonList = [
+  { type: "table", icon: <TableIcon />},
+  { type: "grid", icon: <GridIcon />}
+];
 const Product = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -25,7 +29,6 @@ const Product = () => {
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
   const [viewType, setViewType] = useState("grid");
-  console.log("allFilter", photo);
   useEffect(() => {
     let filtered = photo;
     if (allFilter.search) {
@@ -168,12 +171,15 @@ const Product = () => {
         </div>
         <div className="flex items-center">
           <Button.Group>
-            <Button onClick={() => setViewType("table")}>
-              <TableIcon />
-            </Button>
-            <Button onClick={() => setViewType("grid")}>
-              <GridIcon />
-            </Button>
+            {buttonList.map(({ type, icon }) => (
+              <Button 
+                key={type}
+                onClick={() => setViewType(type)} 
+                className={`${viewType === type ? "dark:bg-gray-700" : ""}`}
+              >
+                {icon}
+              </Button>
+            ))}
           </Button.Group>
           <SearchInput
             onSearch={(e) => setAllFilter({ ...allFilter, search: e })}
