@@ -17,8 +17,8 @@ import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
 const buttonList = [
-  { type: "table", icon: <TableIcon />},
-  { type: "grid", icon: <GridIcon />}
+  { type: "table", icon: <TableIcon /> },
+  { type: "grid", icon: <GridIcon /> },
 ];
 const Product = () => {
   const [photo, setPhoto] = useState([]);
@@ -40,12 +40,10 @@ const Product = () => {
       filtered = filtered.filter((item) => item.type === allFilter.type);
     }
     if (allFilter.price) {
-      filtered = filtered.filter((item) => item.price === allFilter.price);
+      filtered = filtered.filter((item) => item.price <= allFilter.price);
     }
     if (allFilter.quantity) {
-      filtered = filtered.filter(
-        (item) => item.quantity === allFilter.quantity
-      );
+      filtered = filtered.filter((item) => item.quantity <= allFilter.quantity);
     }
     if (allFilter.date) {
       filtered = filtered.filter((item) =>
@@ -144,7 +142,6 @@ const Product = () => {
           setSelectedItems([]);
         });
       }
-
     } catch (error) {
       console.error("Error deleting photos:", error);
     }
@@ -174,9 +171,9 @@ const Product = () => {
         <div className="flex items-center">
           <Button.Group>
             {buttonList.map(({ type, icon }) => (
-              <Button 
+              <Button
                 key={type}
-                onClick={() => setViewType(type)} 
+                onClick={() => setViewType(type)}
                 className={`${viewType === type ? "dark:bg-gray-700" : ""}`}
               >
                 {icon}
@@ -198,7 +195,7 @@ const Product = () => {
           handleDownload={handleDownload}
           handleDelete={handleDelete}
           loading={loading}
-          setSelectedItems={setSelectedItems} 
+          setSelectedItems={setSelectedItems}
         />
       )}
 

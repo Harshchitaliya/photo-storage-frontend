@@ -8,26 +8,26 @@ import {
   TextInput,
 } from "flowbite-react";
 import Portal from "../../components/Portal/Portal";
-// import { Option } from "../../utils/Option";
 
-const FilterModal = ({ isOpen, setIsOpen,  defaultFilters, onApply}) => {
+const FilterModal = ({ isOpen, setIsOpen, defaultFilters, onApply }) => {
   const [allFilters, setAllFilters] = useState(defaultFilters || {});
   const [position, setPosition] = useState({});
   const containerRef = useRef(null);
 
   useEffect(() => {
-
     const updatePosition = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         setPosition({
           top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
+          left: rect.left + window.scrollX + 10,
+          width: rect.width,
         });
       }
     };
     updatePosition();
     setTimeout(updatePosition, 100);
+    setAllFilters(defaultFilters || {});
     window.addEventListener("resize", updatePosition);
     return () => {
       window.removeEventListener("resize", updatePosition);
@@ -39,13 +39,18 @@ const FilterModal = ({ isOpen, setIsOpen,  defaultFilters, onApply}) => {
       <Modal.Body>
         <div>
           <Label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Default label
+            Date
           </Label>
-          <div className="relative" ref={containerRef}>
+          <div
+            ref={containerRef}
+            className="border border-gray-600 rounded-lg p-6"
+          >
             {position && (
               <Portal position={position} wrapperId="datepicker">
                 <Datepicker
-                  value={allFilters.date}
+                  className="[&_input]:border-0 [&_div]:top-2"
+                  value={allFilters.date || null}
+                  placeholder="Select a date"
                   onChange={(e) => setAllFilters({ ...allFilters, date: e })}
                   maxDate={new Date()}
                 />
@@ -54,7 +59,7 @@ const FilterModal = ({ isOpen, setIsOpen,  defaultFilters, onApply}) => {
           </div>
         </div>
 
-        <div className="mt-14">
+        <div className="mt-4">
           <Label
             htmlFor="type"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -75,47 +80,49 @@ const FilterModal = ({ isOpen, setIsOpen,  defaultFilters, onApply}) => {
             <option value="other">Other</option>
           </Select>
         </div>
-        <div className="mt-4">
-          <Label
-            htmlFor="price"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Price
-          </Label>
-          <TextInput
-            id="price"
-            type="number"
-            value={allFilters.price}
-            onChange={(e) =>
-              setAllFilters({ ...allFilters, price: e.target.value })
-            }
-          />
-        </div>
-        <div className="mt-4">
-          <Label
-            htmlFor="quantity"
-            value={allFilters.quantity}
-            onChange={(e) =>
-              setAllFilters({ ...allFilters, quantity: e.target.value })
-            }
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Quantity
-          </Label>
-          <TextInput id="quantity" type="number" />
+        <div className="flex gap-4 w-full justify-between">
+          <div className="mt-4 w-full">
+            <Label
+              htmlFor="price"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Price
+            </Label>
+            <TextInput
+              id="price"
+              type="number"
+              value={allFilters.price}
+              onChange={(e) =>
+                setAllFilters({ ...allFilters, price: e.target.value })
+              }
+            />
+          </div>
+          <div className="mt-4 w-full">
+            <Label
+              htmlFor="quantity"
+              value={allFilters.quantity}
+              onChange={(e) =>
+                setAllFilters({ ...allFilters, quantity: e.target.value })
+              }
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Quantity
+            </Label>
+            <TextInput id="quantity" type="number" />
+          </div>
         </div>
       </Modal.Body>
       <Modal.Footer className="flex justify-between border-t-0">
         <Button onClick={() => setIsOpen(false)}>Close</Button>
         <div className="flex gap-2">
-            <Button
-              onClick={() => {
-                onApply?.(allFilters);
-                setIsOpen(false);
-              }}
-            >
-              Reset
-            </Button>
+          <Button
+            onClick={() => {
+              onApply?.(allFilters);
+              setIsOpen(false);
+            }}
+          >
+            Reset
+          </Button>
           <Button
             color="light"
             onClick={() => {
