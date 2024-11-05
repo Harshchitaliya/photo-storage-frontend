@@ -184,7 +184,7 @@ const Gallery = () => {
                 </div>
             )}
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center sm:justify-between  gap-2">
                 <div className="flex items-center p-2">
                     <Checkbox
                         className="cursor-pointer"
@@ -235,7 +235,7 @@ const Gallery = () => {
                             handleDownload={handleDownload}
                         />
                     ))
-                ) : (
+                ) : !loading && (
                     <p>No photos available</p>
                 )}
             </div>

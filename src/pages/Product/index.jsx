@@ -3,19 +3,14 @@ import { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import ProductCard from "../../components/ProductCard";
-import {
-  DeleteIcon,
-  DownloadIcon,
-  ShareIcon,
-  TableIcon,
-  GridIcon,
-} from "../../components/Icons";
-import { Button, Checkbox, Toast, Table } from "flowbite-react";
+import { TableIcon, GridIcon } from "../../components/Icons";
+import { Button, Checkbox } from "flowbite-react";
 import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";
 import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
+import Selectaction from "../../components/Selectaction";
 const buttonList = [
   { type: "table", icon: <TableIcon /> },
   { type: "grid", icon: <GridIcon /> },
@@ -218,24 +213,13 @@ const Product = () => {
           ))}
         </div>
       )}
-      {selectedItems.length > 0 && (
-        <div className="fixed bottom-4 right-4">
-          <Toast>
-            <div className="flex items-center gap-4">
-              <span>{selectedItems.length} selected</span>
-              <Button onClick={() => handleDownload(selectedItems)}>
-                <DownloadIcon />
-              </Button>
-              <Button onClick={() => handleDelete(selectedItems)}>
-                <DeleteIcon />
-              </Button>
-              <Button onClick={() => handleShare(selectedItems)}>
-                <ShareIcon />
-              </Button>
-            </div>
-          </Toast>
-        </div>
-      )}
+      <Selectaction
+        selectedItems={selectedItems}
+        handleCancel={() => setSelectedItems([])}
+        handleDelete={handleDelete}
+        handleShare={handleShare}
+        handleDownload={handleDownload}
+      />
 
       <FilterModal
         isOpen={filterModalOpen}
