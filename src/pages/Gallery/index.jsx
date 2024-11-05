@@ -5,7 +5,7 @@ import ProductCard from "../../components/ProductCard";
 import { DeleteIcon, DownloadIcon, ShareIcon } from "../../components/Icons";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
-import DrawerComponent from "./drawer";
+import DrawerComponent from "./Drawer";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
 import { ref, getDownloadURL } from "firebase/storage";
