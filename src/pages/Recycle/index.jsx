@@ -17,6 +17,8 @@ const Recycle = () => {
     const { currentUseruid } = useAuth();
     const galleryphoto = false;
     const isrecycle = true;
+    
+    
     useEffect(() => {
         let filtered = photo;
         if (search) {
@@ -117,6 +119,11 @@ const Recycle = () => {
     }
     return (
         <div>
+            {loading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                    <Loader />
+                </div>
+            )}
             <div className="flex items-center justify-between">
                 <div className="flex items-center p-2">
                     <Checkbox
@@ -148,6 +155,7 @@ const Recycle = () => {
                     <p>No photos available</p>
                 )}
             </div>
+            
             {selectedItems.length > 0 && (
                 <div className="fixed bottom-4 right-4">
                     <Toast>

@@ -195,13 +195,20 @@ const Gallery = () => {
             }
             onChange={handleSelectAll}
           />
-          <label className="ml-2 text-sm text-gray-500">Select All</label>
+          <label
+            className="ml-2 text-sm text-gray-500 cursor-pointer"
+            onClick={handleSelectAll}
+          >
+            Select All
+          </label>
         </div>
         <Button.Group className="flex items-center">
           {buttonList.map(({ type: buttonType, label, className }) => (
             <Button
               key={buttonType}
-              className={`${className} ${type === buttonType ? "bg-gray-800" : ""}`}
+              className={`${className} ${
+                type === buttonType ? "bg-gray-800" : ""
+              }`}
               onClick={() => setType(buttonType)}
             >
               {label}
