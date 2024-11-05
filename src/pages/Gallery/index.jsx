@@ -9,6 +9,7 @@ import DrawerComponent from "./Drawer";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, deletePhoto, setFavorite } from "../../server";
 import { ref, getDownloadURL } from "firebase/storage";
+
 const buttonList = [
   { type: "all", label: "All", className: "rounded-r-none" },
   { type: "image", label: "Image", className: "rounded-l-none" },
