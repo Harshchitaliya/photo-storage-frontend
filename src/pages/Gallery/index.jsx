@@ -140,6 +140,7 @@ const Gallery = () => {
     };
 
     const handleDownload = async (urls) => {
+        setLoading(true);
         try {
             const urlArray = Array.isArray(urls) ? urls : [urls];
 
@@ -167,6 +168,7 @@ const Gallery = () => {
     };
 
     const handleShare = async (url) => {
+        setLoading(true);
         try {
             console.log(url);
         } catch (error) {
@@ -195,7 +197,7 @@ const Gallery = () => {
                         onChange={handleSelectAll}
                     />
                     <label
-                        className="ml-2 text-sm text-gray-500 cursor-pointer"
+                        className="ml-2 text-sm text-gray-500 cursor-pointer sm:text-base hidden sm:block"
                         onClick={handleSelectAll}
                     >
                         Select All

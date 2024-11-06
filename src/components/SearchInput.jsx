@@ -25,12 +25,12 @@ const SearchInput = ({ onSearch, filter }) => {
         type="text"
         placeholder="Search"
         id="search"
-        className="dark:bg-gray-800 border-none focus:ring-0 "
+        className="dark:bg-gray-800 border-none focus:ring-0 sm:p-2 p-1 sm:w-40 w-20"
         onChange={(e) => {
           onSearch?.(e.target.value);
         }}
       />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 ">
         {filter && (
           <div onClick={filter}>
             <FilterIcon />

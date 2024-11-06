@@ -174,7 +174,7 @@ export const ShareIcon = (styles = {}) => {
 };
 export const SearchIcon = (styles = {}) => (
   <svg
-    className="w-6 h-6 text-gray-400"
+    className="sm:w-6 sm:h-6 w-5 h-5 text-gray-400"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ export const FilterIcon = (styles = {}) => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-5 h-5"
+    className="w-5 h-5 cursor-pointer"
     {...styles}
   >
     <path
@@ -221,14 +221,14 @@ export const FavoriteIcon = (styles = {}) => (
 export const TableIcon = (styles = {}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    className="sm:w-6 sm:h-6 w-5 h-5"
     {...styles}
   >
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -241,8 +241,7 @@ export const TableIcon = (styles = {}) => (
 export const GridIcon = (styles = {}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    className="sm:w-6 sm:h-6 w-5 h-5"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -310,22 +309,6 @@ export const SortDescIcon = (styles = {}) => (
   </svg>
 );
 
-// export const CancelIcon = (styles = {}) => (
-//   <svg 
-//     className="w-5 h-5" 
-//     viewBox="0 0 24 24" 
-//     fill="none" 
-//     stroke="currentColor"
-//     strokeWidth="2"
-//     strokeLinecap="round"
-//     strokeLinejoin="round"
-//     color="currentColor"
-//     {...styles}
-//   >
-//     <path d="M18 6L6 18" />
-//     <path d="M6 6l12 12" />
-//   </svg>
-// );
 
 export const CancelIcon = (styles = {}) => (
   <svg
@@ -341,5 +324,15 @@ export const CancelIcon = (styles = {}) => (
     <circle cx="12" cy="12" r="10" />
     <path d="M15 9l-6 6" />
     <path d="M9 9l6 6" />
+  </svg>
+);
+export const BackIcon = (styles = {}) => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" {...styles}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+  </svg>
+);
+export const RemoveBackgroundIcon = (styles = {}) => (
+  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" {...styles}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
   </svg>
 );

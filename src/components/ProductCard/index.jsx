@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import {
   VideoIcon,
@@ -13,6 +14,7 @@ import {
 import { Card, Checkbox, Dropdown } from "flowbite-react";
 
 const ProductCard = (pages) => {
+  const navigate = useNavigate();
   const {
     photoUrl,
     checkboxClick,
@@ -23,6 +25,7 @@ const ProductCard = (pages) => {
     handleFavorite,
     setDrawerOpen,
     handleRecycle,
+    type,
   } = pages;
 
   const buttonList = [
@@ -59,21 +62,21 @@ const ProductCard = (pages) => {
   ].filter((item) => item.handler);
   
   const handleCheckboxClick = (url) => {
-    if (checked.includes(url)) {
+    if (checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
     } else {
       checkboxClick((prev) => [...prev, url]);
     }
   };
-
+  
   return (
     <Card className="max-w-sm dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
             className="cursor-pointer"
-            checked={checked.includes(photoUrl.url)}
-            onChange={() => handleCheckboxClick(photoUrl.url)}
+            checked={checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)}
+            onChange={() => handleCheckboxClick(type === "product" ? photoUrl.sku : photoUrl.url)}
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
@@ -104,7 +107,7 @@ const ProductCard = (pages) => {
       </div>
       <div
         className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
-        onClick={() => setDrawerOpen?.(photoUrl)}
+        onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
       >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">

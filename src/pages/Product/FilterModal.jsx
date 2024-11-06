@@ -117,7 +117,7 @@ const FilterModal = ({ isOpen, setIsOpen, defaultFilters, onApply }) => {
         <div className="flex gap-2">
           <Button
             onClick={() => {
-              onApply?.(allFilters);
+              onApply?.({});
               setIsOpen(false);
             }}
           >

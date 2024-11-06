@@ -54,8 +54,9 @@ const Selectaction = (props) => {
     selectedItems.length > 0 && (
       <div className="fixed bottom-4 right-4">
         <Toast>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <span>{selectedItems.length} selected</span>
+            <div className="flex flex-wrap items-center gap-2">      
             {actionList.map(({ onClick, icon, color, key }, index) => (
               <Tooltip content={key} arrow={false} key={index}>
                 <Button 
@@ -67,6 +68,7 @@ const Selectaction = (props) => {
                 </Button>
               </Tooltip>
             ))}
+            </div>
           </div>
         </Toast>
       </div>
