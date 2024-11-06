@@ -10,7 +10,6 @@ import EditProduct from '../pages/EditProduct';
 import Recycle from '../pages/Recycle';
 import Profile from '../pages/Profile';
 import EditImg from '../pages/EditImg';
-import Removebackground from '../pages/Removebackground';
 function AppRoutes() {
   const { loading , currentUseruid } = useAuth();
   // useEffect(() => {
@@ -43,7 +42,6 @@ function AppRoutes() {
       <Route path="/recycle" element={currentUseruid ? <Recycle /> : <Navigate to="/login" />} />
       <Route path="/profile" element={currentUseruid ? <Profile /> : <Navigate to="/login" />} />
       <Route path="/products/:id/:imgId/edit" element={currentUseruid ? <EditImg /> : <Navigate to="/login" />} />
-      <Route path="/products/:id/:imgId/removebackground" element={currentUseruid ? <Removebackground /> : <Navigate to="/login" />} />
     </Routes>
   );
 }

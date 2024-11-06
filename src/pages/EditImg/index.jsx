@@ -26,6 +26,7 @@ const EditImg = () => {
       });
       setImageData(data);
     } catch (error) {
+      window.history.back();
       console.log(error);
     }
   };
