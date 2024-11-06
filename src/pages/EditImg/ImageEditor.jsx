@@ -305,6 +305,65 @@ const ImageEditor = ({ imageUrl, onSave }) => {
         },
     ];
 
+    const getImageDataUri = async (url) => {
+        const response = await fetch(`http://localhost:5001/fetch-image?url=${encodeURIComponent(url)}`);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
+    const captureEditedImage = async () => {
+        try {
+            const dataUri = await getImageDataUri(imageUrl);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+                img.src = dataUri;
+            });
+            
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            ctx.filter = imageRef.current.style.filter;
+            ctx.translate(canvas.width/2, canvas.height/2);
+            ctx.rotate((rotation * Math.PI) / 180);
+            
+            ctx.scale(
+                scale * (flipH ? -1 : 1),
+                scale * (flipV ? -1 : 1)
+            );
+            
+            ctx.drawImage(
+                img,
+                -img.naturalWidth/2,
+                -img.naturalHeight/2,
+                img.naturalWidth,
+                img.naturalHeight
+            );
+            
+            return canvas.toDataURL('image/png');
+        } catch (error) {
+            console.error('Error capturing edited image:', error);
+            throw error;
+        }
+    };
+
+    const handleSaveClick = async () => {
+        try {
+            const editedImageData = await captureEditedImage();
+            onSave(editedImageData);
+            window.history.back();
+        } catch (error) {
+            console.error('Error saving image:', error);
+        }
+    };
+
     return (
         <div className="mx-auto bg-white rounded-xl shadow-lg overflow-auto">
             <div
@@ -427,7 +486,7 @@ const ImageEditor = ({ imageUrl, onSave }) => {
                         <Button onClick={resetAdjustments} className="w-full">
                             Reset
                         </Button>
-                        <Button onClick={onSave} className="w-full">
+                        <Button onClick={handleSaveClick} className="w-full">
                             Save 
                         </Button>
                     </div>
