@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import { useAuth } from "../context/auth/AuthContext.jsx";
@@ -36,7 +36,7 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route
         path="/login"
-        element={!currentUseruid ? <Login /> : <Navigate to="/" />}
+        element={!currentUseruid ? <Login /> : <Home />}
       />
       <Route
         path="/gallery"
