@@ -31,31 +31,31 @@ const ProductCard = (pages) => {
       handler: handleDownload,
       icon: <DownloadIcon />,
       text: "Download",
-      onClick: () => handleDownload(photoUrl),
+      onClick: () => handleDownload(photoUrl.url),
     },
     {
       handler: handleDelete,
       icon: <DeleteIcon />,
       text: "Delete",
-      onClick: () => handleDelete(photoUrl),
+      onClick: () => handleDelete(photoUrl.url  ),
     },
     {
       handler: handleShare,
       icon: <ShareIcon />,
       text: "Share",
-      onClick: () => handleShare(photoUrl),
+      onClick: () => handleShare(photoUrl.url ),
     },
     {
       handler: handleFavorite,
       icon: <FavoriteIcon />,
       text: "Favorite",
-      onClick: () => handleFavorite(photoUrl),
+      onClick: () => handleFavorite(photoUrl.url ),
     },
     {
       handler: handleRecycle,
       icon: <RecycleIcon />,
       text: "Recycle",
-      onClick: () => handleRecycle(photoUrl),
+      onClick: () => handleRecycle(photoUrl.url ),
     },
   ].filter((item) => item.handler);
   

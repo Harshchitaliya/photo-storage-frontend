@@ -1,7 +1,6 @@
 import { useAuth } from "../../context/auth/AuthContext";
 import { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
 import ProductCard from "../../components/ProductCard";
 import { TableIcon, GridIcon } from "../../components/Icons";
 import { Button, Checkbox } from "flowbite-react";
@@ -11,6 +10,8 @@ import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
 import Selectaction from "../../components/Selectaction";
+
+
 const buttonList = [
   { type: "table", icon: <TableIcon /> },
   { type: "grid", icon: <GridIcon /> },
@@ -146,6 +147,7 @@ const Product = () => {
     }
   };
 
+
   const handleShare = (url) => {
     console.log(url);
   };
@@ -173,6 +175,7 @@ const Product = () => {
           <Button.Group>
             {buttonList.map(({ type, icon }) => (
               <Button
+                size="sm"
                 key={type}
                 onClick={() => setViewType(type)}
                 className={`${viewType === type ? "dark:bg-gray-700" : ""}`}
