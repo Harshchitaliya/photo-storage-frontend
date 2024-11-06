@@ -141,23 +141,29 @@ const Gallery = () => {
 
     const handleDownload = async (urls) => {
         try {
-            const urlArray = Array.isArray(urls) ? urls : [urls];
-
-            for (const url of urlArray) {
-                const storageRef = ref(storage, url);
-                try {
-                    setLoading(true);
-                    const downloadUrl = await getDownloadURL(storageRef);
-                    const filename = downloadUrl.split("/").pop();
-                    const atag = document.createElement("a");
-                    atag.href = downloadUrl;
-                    atag.setAttribute("download", filename);
-                    document.body.appendChild(atag);
-                    atag.click();
-                    document.body.removeChild(atag);
-                } catch (error) {
-                    console.error(`Error downloading ${url}:`, error);
+            setLoading(true);
+            if (Array.isArray(urls)) {
+                // Handle multiple downloads
+                for (const url of urls) {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = url.split('/').pop(); // Get filename from URL
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 }
+            } else {
+                // Handle single download
+                const response = await fetch(urls);
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = urls.split('/').pop(); // Get filename from URL
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
         } catch (error) {
             console.log(error);

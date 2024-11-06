@@ -1,6 +1,5 @@
-import { ref, getDownloadURL } from "firebase/storage";
+import { ref, getDownloadURL, deleteObject } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { deleteObject } from "firebase/storage";
 import { isVideo } from "../utils";
 
 export const setAllPhoto = async (props) => {

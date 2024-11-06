@@ -149,11 +149,15 @@ const TableView = (props) => {
                   />
                 </Table.Cell>
                 <Table.Cell>
-                  <img
-                    src={item.photos?.[0]?.downloadUrl}
+                  {item.isVideo ? ( 
+                    <video src={item.photos?.[0]?.downloadUrl} className="w-16 h-16 object-cover rounded" />
+                  ) : (
+                    <img
+                      src={item.photos?.[0]?.downloadUrl}
                     alt="product"
-                    className="w-16 h-16 object-cover rounded"
-                  />
+                      className="w-16 h-16 object-cover rounded"
+                      />
+                  )}
                 </Table.Cell>
                 <Table.Cell>{item.sku || "-"}</Table.Cell>
                 <Table.Cell>{item.description || "-"}</Table.Cell>
@@ -177,7 +181,7 @@ const TableView = (props) => {
                     <Button
                       size="sm"
                       color="failure"
-                      onClick={() => handleDelete([item.downloadUrl])}
+                      onClick={() => handleDelete([item.photos[0].url])}
                     >
                       <DeleteIcon className="w-4 h-4" />
                     </Button>

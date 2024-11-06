@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import { useAuth } from '../context/auth/AuthContext.jsx';
@@ -7,6 +6,7 @@ import Gallery from '../pages/Gallery';
 import Upload from '../pages/Gallery/upload';
 import Product from '../pages/Product';
 import Loader from '../components/Loader';
+// import EditProductForm from '../pages/Productedit';
 import Recycle from '../pages/Recycle';
 
 function AppRoutes() {
@@ -38,6 +38,7 @@ function AppRoutes() {
       <Route path="/upload" element={currentUseruid ? <Upload /> : <Navigate to="/login" />} />
       <Route path="/products" element={currentUseruid ? <Product /> : <Navigate to="/login" />} />
       <Route path="/recycle" element={currentUseruid ? <Recycle /> : <Navigate to="/login" />} />
+      {/* <Route path="/productedit" element={currentUseruid ? <EditProductForm /> : <Navigate to="/login" />} /> */}
     </Routes>
   );
 }

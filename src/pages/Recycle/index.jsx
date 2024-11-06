@@ -7,7 +7,7 @@ import Loader from "../../components/Loader";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, permentDelete, deletePhoto } from "../../server";
 import Selectaction from "../../components/Selectaction";
-
+import { showsku } from "../../server/photo";
 const buttonList = [
   { type: "all", label: "All" },
   { type: "image", label: "Image" },
@@ -45,8 +45,14 @@ const Recycle = () => {
     setFilteredPhoto(filtered);
   }, [search, photo, type]);
 
-  useEffect(() => {
+  useEffect(async () => {
     handleShowPhoto();
+    const skus = await showsku({
+      currentUseruid,
+      firestore,
+      storage,
+    });
+    console.log(skus);
   }, []);
 
   const handleShowPhoto = async () => {
