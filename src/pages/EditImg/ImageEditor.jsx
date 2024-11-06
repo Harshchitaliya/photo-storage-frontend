@@ -1,45 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./imageEditor.css";
 
-// Custom SVG Icons as components
-const Icons = {
-  ZoomIn: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-    </svg>
-  ),
-  ZoomOut: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
-    </svg>
-  ),
-  Rotate: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-    </svg>
-  ),
-  Flip: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-    </svg>
-  ),
-  Blur: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-    </svg>
-  ),
-  Reset: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-    </svg>
-  ),
-  RemoveBG: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-3-4h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-    </svg>
-  ),
-};
+import { ZoomInIcon, ZoomOutIcon, RotateIcon, FlipIcon, BlurIcon, ResetIcon, RemoveBGIcon, SaveIcon } from '../../components/Icons';
+
 
 const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
   // Basic transformations
@@ -292,28 +255,28 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Zoom Out"
                 >
-                  <Icons.ZoomOut />
+                  <ZoomOutIcon />
                 </button>
                 <button
                   onClick={handleZoomIn}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Zoom In"
                 >
-                  <Icons.ZoomIn />
+                  <ZoomInIcon />
                 </button>
                 <button
                   onClick={handleRotateRight}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Rotate"
                 >
-                  <Icons.Rotate />
+                  <RotateIcon />
                 </button>
                 <button
                   onClick={handleFlipHorizontal}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Flip"
                 >
-                  <Icons.Flip />
+                  <FlipIcon />
                 </button>
               </div>
             </div>
@@ -412,7 +375,7 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 onClick={resetAdjustments}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
               >
-                <Icons.Reset />
+                <ResetIcon />
                 Reset
               </button>
               <button
