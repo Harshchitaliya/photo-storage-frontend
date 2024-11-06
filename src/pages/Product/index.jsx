@@ -13,7 +13,6 @@ import Selectaction from "../../components/Selectaction";
 import { Deletesku } from "../../server/product";
 import Loader from "../../components/Loader";
 
-
 const buttonList = [
   { type: "table", icon: <TableIcon /> },
   { type: "grid", icon: <GridIcon /> },
@@ -135,6 +134,24 @@ const Product = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "a") {
+        e.preventDefault();
+        handleSelectAll();
+      }
+
+      if (e.keyCode === 27) {
+        e.preventDefault();
+        setSelectedItems([]);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [photo]);
 
 
   const handleShare = (url) => {

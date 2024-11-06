@@ -137,16 +137,16 @@ const TableView = (props) => {
               <Table.Row key={index} className="hover:bg-gray-800">
                 <Table.Cell>
                   <Checkbox
-                    checked={selectedItems.includes(item.downloadUrl)}
+                    checked={selectedItems.includes(item.sku)}
                     onChange={() => {
-                      if (selectedItems.includes(item.downloadUrl)) {
+                      if (selectedItems.includes(item.sku)) {
                         setSelectedItems(
                           selectedItems.filter(
-                            (url) => url !== item.downloadUrl
+                            (url) => url !== item.sku
                           )
                         );
                       } else {
-                        setSelectedItems([...selectedItems, item.downloadUrl]);
+                        setSelectedItems([...selectedItems, item.sku]);
                       }
                     }}
                   />
