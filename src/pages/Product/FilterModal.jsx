@@ -59,15 +59,16 @@ const FilterModal = ({ isOpen, setIsOpen, defaultFilters, onApply }) => {
           </div>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 ">
           <Label
             htmlFor="type"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white "
           >
             Type
           </Label>
           <Select
             id="type"
+          
             value={allFilters.type}
             onChange={(e) =>
               setAllFilters({ ...allFilters, type: e.target.value })

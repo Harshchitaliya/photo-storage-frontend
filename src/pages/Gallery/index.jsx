@@ -238,7 +238,7 @@ const Gallery = () => {
                         />
                     ))
                 ) : !loading && (
-                    <p>No photos available</p>
+                    (<p className="text-center text-gray-500 text-sm">No photos found</p>)
                 )}
             </div>
 

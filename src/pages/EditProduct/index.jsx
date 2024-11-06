@@ -1,18 +1,21 @@
 import React, { useState } from "react";
-import { Button, TextInput, Label } from "flowbite-react";
+import { Button, } from "flowbite-react";
 import ImageGallery from "./ImageGallery";
 import { productData, updateProductData } from "../../server";
 import { useAuth } from "../../context/auth/AuthContext";
 import { BackIcon } from "../../components/Icons";
 import { firestore, storage } from "../../context/auth/connection/connection";
 import ProductEdit from "./ProductEdit";
+import Loader from "../../components/Loader";
 
 const EditProduct = () => {
   const [formData, setFormData] = useState({});
   const [id, setId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const { currentUseruid } = useAuth();
   const getproductData = async (productId) => {
     try {
+      setIsLoading(true);
       const product = await productData({
         currentUseruid,
         storage,
@@ -23,6 +26,8 @@ const EditProduct = () => {
     } catch (error) {
       window.history.back();
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   React.useEffect(() => {
@@ -73,17 +78,21 @@ const EditProduct = () => {
           </Button>
         </div>
       </div>
-      <div >
-        <div
-          className="flex  justify-center items-center gap-3 mt-3 overflow-auto"
-          style={{ height: "calc(100vh - 120px)" }}
-        >
-          <ImageGallery
-            photos={formData?.photos?.filter((photo) => !photo.isDeleted) || []}
-            setFormData={setFormData}
-          />
-          <ProductEdit setFormData={setFormData} formData={formData} />
-        </div>
+      <div>
+        {isLoading ? (
+          <div className="flex justify-center items-center" style={{ height: "calc(100vh - 120px)" }}>
+            <Loader size="xl" />
+          </div>
+        ) : (
+          <div className="flex justify-center gap-3 mt-3 overflow-auto" 
+               style={{ height: "calc(100vh - 120px)" }}>
+            <ImageGallery
+              photos={formData?.photos?.filter((photo) => !photo.isDeleted) || []}
+              setFormData={setFormData}
+            />
+            <ProductEdit setFormData={setFormData} formData={formData} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import ProductCard from "../../components/ProductCard";
 import { Button, Checkbox, Toast } from "flowbite-react";
 import Loader from "../../components/Loader";
 import SearchInput from "../../components/SearchInput";
-import { setAllPhoto, permentDelete, deletePhoto } from "../../server";
+import { setAllPhoto, deletePhoto, permentDelete } from "../../server";
 import Selectaction from "../../components/Selectaction";
 
 const buttonList = [
@@ -104,7 +104,6 @@ const Recycle = () => {
   };
 
   const handleDelete = async (urls) => {
-    console.log(currentUseruid);
     try {
       setLoading(true);
       await permentDelete({ urls, currentUseruid, firestore, storage });
@@ -179,13 +178,13 @@ const Recycle = () => {
               photoUrl={photoUrl}
               checked={selectedItems}
               checkboxClick={setSelectedItems}
-              handleDelete={() => handleDelete(photoUrl.url)}
-              handleRecycle={() => handleRecycle(photoUrl.url)}
+              handleDelete={() => handleDelete([photoUrl.url])}
+              handleRecycle={() => handleRecycle([photoUrl.url])}
             />
           ))
-        ) : (
-          <p>No photos available</p>
-        )}
+        ) :!loading && (
+          (<p className="text-center text-gray-500 text-sm">No photos found</p>)
+      )}
       </div>
 
       <Selectaction
