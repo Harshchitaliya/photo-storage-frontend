@@ -115,7 +115,7 @@ const Product = () => {
   };
 
   const handleDelete = async (urls) => {
-    if ( urls.length === 0) return;
+    if (urls.length === 0) return;
     const userDocRef = doc(firestore, "Users", currentUseruid);
     try {
       const userDoc = await getDoc(userDocRef);
