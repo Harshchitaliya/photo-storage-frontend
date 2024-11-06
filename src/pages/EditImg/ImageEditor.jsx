@@ -6,6 +6,7 @@ import {
     RotateIcon,
     FlipIcon
 } from "../../components/Icons";
+import "./imageEditor.css";
 import { Tabs } from "flowbite-react";
 
 const ImageEditor = ({ imageUrl, onSave }) => {
@@ -199,7 +200,7 @@ const ImageEditor = ({ imageUrl, onSave }) => {
     // Update the renderBackgroundRemoval function
     const renderBackgroundRemoval = () => (
         <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
-            <div className="flex flex-col gap-2 items-center justify-between">
+            <div className="flex flex-col gap-2  justify-start">
                 <Button
                     onClick={handleBgRemove}
                     disabled={isProcessing}
@@ -358,7 +359,6 @@ const ImageEditor = ({ imageUrl, onSave }) => {
         try {
             const editedImageData = await captureEditedImage();
             onSave(editedImageData);
-            window.history.back();
         } catch (error) {
             console.error('Error saving image:', error);
         }
