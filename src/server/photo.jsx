@@ -2,6 +2,8 @@ import { ref, getDownloadURL, deleteObject } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { isVideo } from "../utils";
 
+
+
 export const setAllPhoto = async (props) => {
   const { currentUseruid, firestore, storage, galleryphoto } = props;
   const userDocRef = doc(firestore, "Users", currentUseruid);

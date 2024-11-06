@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import {
   VideoIcon,
@@ -13,6 +14,7 @@ import {
 import { Card, Checkbox, Dropdown } from "flowbite-react";
 
 const ProductCard = (pages) => {
+  const navigate = useNavigate();
   const {
     photoUrl,
     checkboxClick,
@@ -60,7 +62,6 @@ const ProductCard = (pages) => {
   ].filter((item) => item.handler);
   
   const handleCheckboxClick = (url) => {
-    console.log(type === "product" ? photoUrl.sku : photoUrl.url);
     if (checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
     } else {
@@ -106,7 +107,7 @@ const ProductCard = (pages) => {
       </div>
       <div
         className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
-        onClick={() => setDrawerOpen?.(photoUrl)}
+        onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
       >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
