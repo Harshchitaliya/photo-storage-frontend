@@ -1,4 +1,5 @@
-import React, { useState,  } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button, } from "flowbite-react";
 import ImageGallery from "./ImageGallery";
 import { productData, updateProductData } from "../../server";
@@ -7,6 +8,7 @@ import { BackIcon } from "../../components/Icons";
 import { firestore, storage } from "../../context/auth/connection/connection";
 import ProductEdit from "./ProductEdit";
 import Loader from "../../components/Loader";
+
 
 const EditProduct = () => {
   const [formData, setFormData] = useState({});
