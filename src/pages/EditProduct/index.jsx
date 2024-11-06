@@ -9,15 +9,15 @@ import ProductEdit from "./ProductEdit";
 
 const EditProduct = () => {
   const [formData, setFormData] = useState({});
-  const [id, setId] = useState("");
+  const { id } = useParams();
   const { currentUseruid } = useAuth();
-  const getproductData = async (productId) => {
+  const getproductData = async () => {
     try {
       const product = await productData({
         currentUseruid,
         storage,
         firestore,
-        productId: productId || id,
+        productId: id,
       });
       setFormData(product);
     } catch (error) {
@@ -25,11 +25,8 @@ const EditProduct = () => {
       console.log(error);
     }
   };
-  React.useEffect(() => {
-    const pathSegments = window.location.pathname.split("/");
-    const productId = pathSegments[2];
-    setId(productId);
-    getproductData(productId);
+  useEffect(() => {  
+    getproductData();
   }, []);
 
   const handleSubmit = async (e) => {
