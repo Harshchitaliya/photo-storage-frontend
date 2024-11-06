@@ -251,10 +251,9 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="grid md:grid-cols-[2fr,1fr]">
-          {/* Image Preview Section */}
           <div className="relative h-[600px] bg-gray-900">
             <div 
               ref={containerRef}
@@ -272,7 +271,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 draggable="false"
               />
 
-              {/* SVG Filters */}
               <svg className="hidden">
                 <filter id="sharpen">
                   <feConvolveMatrix
@@ -287,8 +285,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 </filter>
               </svg>
             </div>
-
-            {/* Floating Controls */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 rounded-full px-4 py-2 backdrop-blur-sm">
               <div className="flex items-center gap-4">
                 <button
@@ -322,12 +318,8 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
               </div>
             </div>
           </div>
-
-          {/* Controls Section */}
           <div className="p-6 bg-white">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Image</h2>
-
-            {/* Tabs */}
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Image</h2> 
             <div className="flex mb-6 border-b">
               {['basic', 'filters', 'effects', 'background'].map((tab) => (
                 <button
@@ -343,8 +335,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 </button>
               ))}
             </div>
-
-            {/* Tab Content */}
             {activeTab === 'basic' && (
               <div className="space-y-6">
                 {[
@@ -417,8 +407,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
             )}
 
             {activeTab === 'background' && renderBackgroundRemoval()}
-
-            {/* Reset and Action Buttons */}
             <div className="flex gap-4 mt-8">
               <button
                 onClick={resetAdjustments}
