@@ -152,8 +152,7 @@ export const showsku = async (props) => {
   if (userDoc.exists()) {
     const userData = userDoc.data();
     const skus = userData.skus;
-
-     return await Promise.all(skus.map(async (sku) => {   
+    const photos = await Promise.all(skus.map(async (sku) => { 
       const activePhotos = await Promise.all(
         sku.photos
           .filter(photo => !photo.isDeleted)
@@ -169,13 +168,12 @@ export const showsku = async (props) => {
       return {
         ...sku,
         photos: activePhotos,
-        isVideo: isVideo(activePhotos[0].url),
+        isVideo: isVideo(activePhotos?.[0]?.url || ""),
         allSearch: `${sku.sku} ${sku.title}`.toLowerCase(),
       };
     }));
-    
+    return photos.filter(photo => photo.photos.length > 0);
   }
-  
   return [];
 }
 

@@ -100,36 +100,40 @@ const Product = () => {
   const handleSelectAll = (e) => {
     if (e?.target?.type === "checkbox") {
       if (e.target.checked) {
-        setSelectedItems(photo.map((item) => item.downloadUrl));
+        setSelectedItems(filteredPhoto.map((item) => item.sku));
       } else {
         setSelectedItems([]);
       }
     } else {
-      if (selectedItems.length === photo.length) {
+      if (selectedItems.length === filteredPhoto.length) {
         setSelectedItems([]);
       } else {
-        setSelectedItems(photo.map((item) => item.downloadUrl));
+        setSelectedItems(filteredPhoto.map((item) => item.sku));
       }
     }
   };
 
   const handleDelete = async (urls) => {
-    if (!urls || urls.length === 0) return;
-
+    if ( urls.length === 0) return;
     const userDocRef = doc(firestore, "Users", currentUseruid);
     try {
       const userDoc = await getDoc(userDocRef);
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const updatedSkus = userData.skus.map((sku) => ({
-          ...sku,
-          photos: sku.photos.map((photo) => ({
-            ...photo,
-            isDeleted: urls.includes(photo.url) ? true : photo.isDeleted,
-          })),
-        }));
+        const updatedSkus = userData.skus.map((sku) =>{
 
-        // Update the document with the modified skus
+          if(urls.includes(sku.sku)){
+            return ({
+              ...sku,
+              photos: sku.photos.map((photo) => ({
+                ...photo,
+                isDeleted: true,
+              })),
+            })
+          }
+          return sku
+        })
+  
         await updateDoc(userDocRef, {
           skus: updatedSkus,
         }).then(() => {
@@ -151,8 +155,8 @@ const Product = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div>
+      <div className="flex flex-wrap items-center sm:justify-between  gap-2">
         <div className="flex items-center">
           <Checkbox
             checked={
@@ -161,9 +165,11 @@ const Product = () => {
             }
             onChange={handleSelectAll}
           />
-          <label className="ml-2 text-sm text-gray-500">Select All</label>
+          <label className="ml-2 text-sm text-gray-500 sm:text-base hidden sm:block">
+            Select All
+          </label>
         </div>
-        <div className="flex items-center">
+        <div className="flex flex-wrap items-center gap-2">
           <Button.Group>
             {buttonList.map(({ type, icon }) => (
               <Button
@@ -181,42 +187,43 @@ const Product = () => {
           />
         </div>
       </div>
-      {viewType === "table" && (
-        <TableView
-          filteredPhoto={filteredPhoto}
-          selectedItems={selectedItems}
-          handleSelectAll={handleSelectAll}
-          handleShare={handleShare}
-          handleDownload={handleDownload}
-          handleDelete={handleDelete}
-          loading={loading}
-          setSelectedItems={setSelectedItems}
-        />
-      )}
 
-      {viewType === "grid" && (
-        <div
-          className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
-          style={{ height: "calc(100vh - 120px)" }}
-        >
-          {filteredPhoto.map((photoUrl, index) => (
+      <div
+        className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
+        style={{ height: "calc(100vh - 120px)" }}
+      >
+        {viewType === "table" && (
+          <TableView
+            filteredPhoto={filteredPhoto}
+            selectedItems={selectedItems}
+            handleSelectAll={handleSelectAll}
+            handleShare={handleShare}
+            handleDownload={handleDownload}
+            handleDelete={handleDelete}
+            loading={loading}
+            setSelectedItems={setSelectedItems}
+          />
+        )}
+
+        {viewType === "grid" &&
+          filteredPhoto.map((photoUrl, index) => (
             <ProductCard
               photoUrl={photoUrl}
               key={index}
               checkboxClick={setSelectedItems}
               checked={selectedItems}
               handleDownload={() => handleDownload(photoUrl.downloadUrl)}
-              handleDelete={() => handleDelete(photoUrl.url)}
+              handleDelete={() => handleDelete([photoUrl.sku])}
               handleShare={() => handleShare(photoUrl.url)}
               setDrawerOpen={setDrawerOpen}
+              type={"product"}
             />
           ))}
-        </div>
-      )}
+      </div>
       <Selectaction
         selectedItems={selectedItems}
         handleCancel={() => setSelectedItems([])}
-        handleDelete={handleDelete}
+        handleDelete={() => handleDelete(selectedItems)}
         handleShare={handleShare}
         handleDownload={handleDownload}
       />
@@ -225,6 +232,7 @@ const Product = () => {
         isOpen={filterModalOpen}
         setIsOpen={setFilterModalOpen}
         onApply={setAllFilter}
+        defaultFilters={allFilter}
       />
     </div>
   );

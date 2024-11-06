@@ -23,6 +23,7 @@ const ProductCard = (pages) => {
     handleFavorite,
     setDrawerOpen,
     handleRecycle,
+    type,
   } = pages;
 
   const buttonList = [
@@ -59,21 +60,22 @@ const ProductCard = (pages) => {
   ].filter((item) => item.handler);
   
   const handleCheckboxClick = (url) => {
-    if (checked.includes(url)) {
+    console.log(type === "product" ? photoUrl.sku : photoUrl.url);
+    if (checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
     } else {
       checkboxClick((prev) => [...prev, url]);
     }
   };
-
+  
   return (
     <Card className="max-w-sm dark:bg-gray-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Checkbox
             className="cursor-pointer"
-            checked={checked.includes(photoUrl.url)}
-            onChange={() => handleCheckboxClick(photoUrl.url)}
+            checked={checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)}
+            onChange={() => handleCheckboxClick(type === "product" ? photoUrl.sku : photoUrl.url)}
           />
           <span className="text-white">{photoUrl.sku}</span>
         </div>
