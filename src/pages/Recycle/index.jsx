@@ -179,7 +179,7 @@ const Recycle = () => {
               photoUrl={photoUrl}
               checked={selectedItems}
               checkboxClick={setSelectedItems}
-              handleDelete={() => handleDelete(photoUrl.url)}
+              handleDelete={() => handleDelete([photoUrl.url])}
               handleRecycle={() => handleRecycle(photoUrl.url)}
             />
           ))

@@ -10,6 +10,7 @@ import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
 import Selectaction from "../../components/Selectaction";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 
 const buttonList = [
