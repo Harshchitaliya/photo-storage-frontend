@@ -6,9 +6,8 @@ import Gallery from '../pages/Gallery';
 import Upload from '../pages/Gallery/upload';
 import Product from '../pages/Product';
 import Loader from '../components/Loader';
-// import EditProductForm from '../pages/Productedit';
 import Recycle from '../pages/Recycle';
-
+import Profile from '../pages/Profile';
 function AppRoutes() {
   const { loading , currentUseruid } = useAuth();
   // useEffect(() => {
@@ -38,7 +37,7 @@ function AppRoutes() {
       <Route path="/upload" element={currentUseruid ? <Upload /> : <Navigate to="/login" />} />
       <Route path="/products" element={currentUseruid ? <Product /> : <Navigate to="/login" />} />
       <Route path="/recycle" element={currentUseruid ? <Recycle /> : <Navigate to="/login" />} />
-      {/* <Route path="/productedit" element={currentUseruid ? <EditProductForm /> : <Navigate to="/login" />} /> */}
+      <Route path="/profile" element={currentUseruid ? <Profile /> : <Navigate to="/login" />} />
     </Routes>
   );
 }

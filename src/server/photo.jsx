@@ -178,3 +178,15 @@ export const showsku = async (props) => {
   return [];
 }
 
+
+export const usedata = async (props) => {
+  const { currentUseruid, firestore } = props;
+  const userDocRef = doc(firestore, "Users", currentUseruid);
+  const userDoc = await getDoc(userDocRef);
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    delete userData.skus;
+    return userData;
+  }
+  return null;
+};
