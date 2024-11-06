@@ -8,7 +8,7 @@ import { BackIcon } from "../../components/Icons";
 import { firestore, storage } from "../../context/auth/connection/connection";
 import ProductEdit from "./ProductEdit";
 import Loader from "../../components/Loader";
-import { useParams } from "react-router-dom";
+
 
 
 const EditProduct = () => {

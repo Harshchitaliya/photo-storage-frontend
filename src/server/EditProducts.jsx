@@ -89,6 +89,6 @@ export const getImageData = async (props) => {
     const img = product.photos.filter((photo) => !photo.isDeleted)[imageIndex];
     const photoRef = ref(storage, img.url);
     const downloadUrl = await getDownloadURL(photoRef);
-    return { isVideo: isVideo(downloadUrl), img: { ...img, url: downloadUrl } };
+    return { isVideo: isVideo(downloadUrl), img: { ...img,URL:img.url, url: downloadUrl } };
   }
 };
