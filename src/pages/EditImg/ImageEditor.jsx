@@ -32,7 +32,13 @@ const Icons = {
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
     </svg>
-  )
+  ),
+  RemoveBG: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-3-4h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+  ),
 };
 
 const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
@@ -179,6 +185,71 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
   const handleRotateRight = () => setRotation(prev => prev + 90);
   const handleFlipHorizontal = () => imageRef.current.style.transform += ' scaleX(-1)';
 
+  // Replace the existing background removal states with:
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [bgRemovedImage, setBgRemovedImage] = useState(null);
+
+  const handleBgRemove = async () => {
+    if (!imageUrl) return;
+    setIsProcessing(true);
+
+    try {
+      const response = await fetch("http://localhost:5001/remove-background", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Background removal failed");
+      }
+
+      const rbgResultData = await response.blob();
+      const newImageUrl = URL.createObjectURL(rbgResultData);
+      
+      // Update the image reference with the new background-removed image
+      if (imageRef.current) {
+        imageRef.current.src = newImageUrl;
+      }
+      setBgRemovedImage(newImageUrl);
+    } catch (error) {
+      console.error("Error removing background:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Update the renderBackgroundRemoval function
+  const renderBackgroundRemoval = () => (
+    <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">Background Removal</h3>
+        <button
+          onClick={handleBgRemove}
+          disabled={isProcessing}
+          className={`px-4 py-2 rounded-lg font-medium ${
+            isProcessing 
+              ? 'bg-gray-300 cursor-not-allowed' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          {isProcessing ? 'Processing...' : 'Remove Background'}
+        </button>
+      </div>
+
+      <div className="text-sm text-gray-500">
+        <p>Tips:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Best results with clear subjects</li>
+          <li>Processing may take a few moments</li>
+          <li>Make sure the image is well-lit</li>
+        </ul>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -258,7 +329,7 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
 
             {/* Tabs */}
             <div className="flex mb-6 border-b">
-              {['basic', 'filters', 'effects'].map((tab) => (
+              {['basic', 'filters', 'effects', 'background'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -344,6 +415,8 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 ))}
               </div>
             )}
+
+            {activeTab === 'background' && renderBackgroundRemoval()}
 
             {/* Reset and Action Buttons */}
             <div className="flex gap-4 mt-8">
