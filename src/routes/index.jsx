@@ -9,6 +9,7 @@ import Loader from '../components/Loader';
 import EditProduct from '../pages/EditProduct';
 import Recycle from '../pages/Recycle';
 import Profile from '../pages/Profile';
+import EditImg from '../pages/EditImg';
 function AppRoutes() {
   const { loading , currentUseruid } = useAuth();
   // useEffect(() => {
@@ -40,6 +41,7 @@ function AppRoutes() {
       <Route path="/products/:id/edit" element={currentUseruid ? <EditProduct /> : <Navigate to="/login" />} />
       <Route path="/recycle" element={currentUseruid ? <Recycle /> : <Navigate to="/login" />} />
       <Route path="/profile" element={currentUseruid ? <Profile /> : <Navigate to="/login" />} />
+      <Route path="/products/:id/:imgId/edit" element={currentUseruid ? <EditImg /> : <Navigate to="/login" />} />
     </Routes>
   );
 }

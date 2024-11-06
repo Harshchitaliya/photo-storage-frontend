@@ -79,8 +79,9 @@ const EditProduct = () => {
           style={{ height: "calc(100vh - 120px)" }}
         >
           <ImageGallery
-            photos={formData?.photos?.filter((photo) => !photo.isDeleted) || []}
+            allPhotos={formData?.photos || []}
             setFormData={setFormData}
+            id={id}
           />
           <ProductEdit setFormData={setFormData} formData={formData} />
         </div>

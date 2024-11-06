@@ -9,7 +9,7 @@ import {
   SortDescIcon,
 } from "../../components/Icons";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const TableView = (props) => {
   const {
     filteredPhoto,
@@ -24,6 +24,7 @@ const TableView = (props) => {
 
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
+  const navigate = useNavigate();
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -148,7 +149,7 @@ const TableView = (props) => {
                     }}
                   />
                 </Table.Cell>
-                <Table.Cell>
+                <Table.Cell className="cursor-pointer" onClick={() => navigate(`/products/${item.sku}/edit`)}>
                   {item.isVideo ? ( 
                     <video src={item.photos?.[0]?.downloadUrl} className="w-16 h-16 object-cover rounded" />
                   ) : (
