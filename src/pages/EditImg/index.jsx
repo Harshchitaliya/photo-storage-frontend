@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import { useAuth } from "../../context/auth/AuthContext";
 import { getImageData } from "../../server";
 import { firestore, storage } from "../../context/auth/connection/connection";
@@ -27,10 +28,6 @@ const EditImg = () => {
     console.log('Saving edited image:', editedImage);
   };
 
-  const handleCancel = () => {
-    // TODO: Implement cancel functionality
-    console.log('Editing cancelled');
-  };
 
   return (
     <div>
@@ -38,7 +35,6 @@ const EditImg = () => {
         <ImageEditor
           imageUrl={imageData.img.url}
           onSave={handleSave}
-          onCancel={handleCancel}
         />
       )}
     </div>

@@ -21,7 +21,7 @@ const ImageGallery = ({ allPhotos, setFormData, id }) => {
   return (
     <div className="w-full">
       {photos.length > 0 && (
-        <div className="pt-16 mb-5 flex justify-end">
+        <div className="mb-5 flex justify-end">
           <Button onClick={handleRemoveBackground}>
             <RemoveBackgroundIcon />
             <span className="text-sm flex items-center ml-1">
