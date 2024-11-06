@@ -107,7 +107,7 @@ const ProductCard = (pages) => {
       </div>
       <div
         className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
-        onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
+        
       >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
@@ -117,6 +117,7 @@ const ProductCard = (pages) => {
               controls={false}
               preload="metadata"
               playsInline
+              onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
             >
               Your browser does not support the video tag.
             </video>
@@ -126,6 +127,7 @@ const ProductCard = (pages) => {
             src={photoUrl.photos?.[0]?.downloadUrl ||photoUrl.downloadUrl}
             alt="Preview"
             className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
+            onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
           />
         )}
       </div>

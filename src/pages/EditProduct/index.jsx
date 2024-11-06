@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, } from "flowbite-react";
 import ImageGallery from "./ImageGallery";
 import { productData, updateProductData } from "../../server";
@@ -7,20 +7,21 @@ import { BackIcon } from "../../components/Icons";
 import { firestore, storage } from "../../context/auth/connection/connection";
 import ProductEdit from "./ProductEdit";
 import Loader from "../../components/Loader";
+import { useParams } from "react-router-dom";
 
 const EditProduct = () => {
   const [formData, setFormData] = useState({});
-  const [id, setId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams();
   const { currentUseruid } = useAuth();
-  const getproductData = async (productId) => {
+  const getproductData = async () => {
     try {
       setIsLoading(true);
       const product = await productData({
         currentUseruid,
         storage,
         firestore,
-        productId: productId || id,
+        productId: id,
       });
       setFormData(product);
     } catch (error) {
@@ -30,11 +31,8 @@ const EditProduct = () => {
       setIsLoading(false);
     }
   };
-  React.useEffect(() => {
-    const pathSegments = window.location.pathname.split("/");
-    const productId = pathSegments[2];
-    setId(productId);
-    getproductData(productId);
+  useEffect(() => {  
+    getproductData();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -87,8 +85,9 @@ const EditProduct = () => {
           <div className="flex justify-center gap-3 mt-3 overflow-auto" 
                style={{ height: "calc(100vh - 120px)" }}>
             <ImageGallery
-              photos={formData?.photos?.filter((photo) => !photo.isDeleted) || []}
-              setFormData={setFormData}
+               allPhotos={formData?.photos || []}
+               setFormData={setFormData}
+               id={id}
             />
             <ProductEdit setFormData={setFormData} formData={formData} />
           </div>

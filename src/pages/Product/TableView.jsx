@@ -10,7 +10,7 @@ import {
   SortDescIcon,
 } from "../../components/Icons";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const TableView = (props) => {
   const {
     filteredPhoto,
@@ -25,6 +25,7 @@ const TableView = (props) => {
 
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
+  const navigate = useNavigate();
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -136,24 +137,23 @@ const TableView = (props) => {
               <Table.Row key={index} className="hover:bg-gray-800">
                 <Table.Cell>
                   <Checkbox
-                    checked={selectedItems.includes(item.downloadUrl)}
+                    checked={selectedItems.includes(item.sku)}
                     onChange={() => {
-                      if (selectedItems.includes(item.downloadUrl)) {
+                      if (selectedItems.includes(item.sku)) {
                         setSelectedItems(
                           selectedItems.filter(
-                            (url) => url !== item.downloadUrl
+                            (url) => url !== item.sku
                           )
                         );
                       } else {
-                        setSelectedItems([...selectedItems, item.downloadUrl]);
+                        setSelectedItems([...selectedItems, item.sku]);
                       }
                     }}
                   />
                 </Table.Cell>
-                <Table.Cell>
-                  {item.isVideo ? (
-                    <video
-                      src={item.photos?.[0]?.downloadUrl} className="w-16 h-16 object-cover rounded" />
+                <Table.Cell className="cursor-pointer" onClick={() => navigate(`/products/${item.sku}/edit`)}>
+                  {item.isVideo ? ( 
+                    <video src={item.photos?.[0]?.downloadUrl} className="w-16 h-16 object-cover rounded" />
                   ) : (
                     <img
                       src={item.photos?.[0]?.downloadUrl}
