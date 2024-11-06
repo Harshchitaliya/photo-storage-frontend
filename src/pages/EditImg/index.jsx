@@ -34,7 +34,6 @@ const EditImg = () => {
 
   return (
     <div>
-      <h1>Edit Image</h1>
       {imageData && (
         <ImageEditor
           imageUrl={imageData.img.url}

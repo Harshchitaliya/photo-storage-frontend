@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Button, } from "flowbite-react";
 import ImageGallery from "./ImageGallery";
 import { productData, updateProductData } from "../../server";
@@ -9,10 +10,11 @@ import ProductEdit from "./ProductEdit";
 import Loader from "../../components/Loader";
 import { useParams } from "react-router-dom";
 
+
 const EditProduct = () => {
   const [formData, setFormData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
   const { currentUseruid } = useAuth();
   const getproductData = async () => {
     try {
@@ -85,9 +87,9 @@ const EditProduct = () => {
           <div className="flex justify-center gap-3 mt-3 overflow-auto" 
                style={{ height: "calc(100vh - 120px)" }}>
             <ImageGallery
-               allPhotos={formData?.photos || []}
-               setFormData={setFormData}
-               id={id}
+                allPhotos={formData?.photos || []}
+                setFormData={setFormData}
+                id={id}
             />
             <ProductEdit setFormData={setFormData} formData={formData} />
           </div>

@@ -1,39 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./imageEditor.css";
 
-// Custom SVG Icons as components
-const Icons = {
-  ZoomIn: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-    </svg>
-  ),
-  ZoomOut: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
-    </svg>
-  ),
-  Rotate: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-    </svg>
-  ),
-  Flip: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-    </svg>
-  ),
-  Blur: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
-    </svg>
-  ),
-  Reset: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-    </svg>
-  )
-};
+import { ZoomInIcon, ZoomOutIcon, RotateIcon, FlipIcon, BlurIcon, ResetIcon, RemoveBGIcon, SaveIcon } from '../../components/Icons';
+
 
 const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
   // Basic transformations
@@ -179,11 +148,75 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
   const handleRotateRight = () => setRotation(prev => prev + 90);
   const handleFlipHorizontal = () => imageRef.current.style.transform += ' scaleX(-1)';
 
+  // Replace the existing background removal states with:
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [bgRemovedImage, setBgRemovedImage] = useState(null);
+
+  const handleBgRemove = async () => {
+    if (!imageUrl) return;
+    setIsProcessing(true);
+
+    try {
+      const response = await fetch("http://localhost:5001/remove-background", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Background removal failed");
+      }
+
+      const rbgResultData = await response.blob();
+      const newImageUrl = URL.createObjectURL(rbgResultData);
+      
+      // Update the image reference with the new background-removed image
+      if (imageRef.current) {
+        imageRef.current.src = newImageUrl;
+      }
+      setBgRemovedImage(newImageUrl);
+    } catch (error) {
+      console.error("Error removing background:", error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Update the renderBackgroundRemoval function
+  const renderBackgroundRemoval = () => (
+    <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900">Background Removal</h3>
+        <button
+          onClick={handleBgRemove}
+          disabled={isProcessing}
+          className={`px-4 py-2 rounded-lg font-medium ${
+            isProcessing 
+              ? 'bg-gray-300 cursor-not-allowed' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          {isProcessing ? 'Processing...' : 'Remove Background'}
+        </button>
+      </div>
+
+      <div className="text-sm text-gray-500">
+        <p>Tips:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Best results with clear subjects</li>
+          <li>Processing may take a few moments</li>
+          <li>Make sure the image is well-lit</li>
+        </ul>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="grid md:grid-cols-[2fr,1fr]">
-          {/* Image Preview Section */}
           <div className="relative h-[600px] bg-gray-900">
             <div 
               ref={containerRef}
@@ -201,7 +234,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 draggable="false"
               />
 
-              {/* SVG Filters */}
               <svg className="hidden">
                 <filter id="sharpen">
                   <feConvolveMatrix
@@ -216,8 +248,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 </filter>
               </svg>
             </div>
-
-            {/* Floating Controls */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 rounded-full px-4 py-2 backdrop-blur-sm">
               <div className="flex items-center gap-4">
                 <button
@@ -225,40 +255,36 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Zoom Out"
                 >
-                  <Icons.ZoomOut />
+                  <ZoomOutIcon />
                 </button>
                 <button
                   onClick={handleZoomIn}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Zoom In"
                 >
-                  <Icons.ZoomIn />
+                  <ZoomInIcon />
                 </button>
                 <button
                   onClick={handleRotateRight}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Rotate"
                 >
-                  <Icons.Rotate />
+                  <RotateIcon />
                 </button>
                 <button
                   onClick={handleFlipHorizontal}
                   className="text-white hover:text-blue-400 transition-colors"
                   title="Flip"
                 >
-                  <Icons.Flip />
+                  <FlipIcon />
                 </button>
               </div>
             </div>
           </div>
-
-          {/* Controls Section */}
           <div className="p-6 bg-white">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Image</h2>
-
-            {/* Tabs */}
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Image</h2> 
             <div className="flex mb-6 border-b">
-              {['basic', 'filters', 'effects'].map((tab) => (
+              {['basic', 'filters', 'effects', 'background'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -272,8 +298,6 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
                 </button>
               ))}
             </div>
-
-            {/* Tab Content */}
             {activeTab === 'basic' && (
               <div className="space-y-6">
                 {[
@@ -345,13 +369,13 @@ const ImageEditor = ({ imageUrl, onSave, onCancel }) => {
               </div>
             )}
 
-            {/* Reset and Action Buttons */}
+            {activeTab === 'background' && renderBackgroundRemoval()}
             <div className="flex gap-4 mt-8">
               <button
                 onClick={resetAdjustments}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
               >
-                <Icons.Reset />
+                <ResetIcon />
                 Reset
               </button>
               <button
