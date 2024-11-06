@@ -78,11 +78,11 @@ const Button = {
       },
       outline: "border border-transparent",
       isProcessingPadding: {
-        xs: "pl-8",
-        sm: "pl-10",
-        md: "pl-12",
-        lg: "pl-16",
-        xl: "pl-20",
+        xs: "!pl-8",
+        sm: "!pl-10",
+        md: "!pl-12",
+        lg: "!pl-16",
+        xl: "!pl-20",
       },
     },
     label:

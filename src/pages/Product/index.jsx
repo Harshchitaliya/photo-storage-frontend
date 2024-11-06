@@ -10,7 +10,8 @@ import { showsku } from "../../server/photo";
 import TableView from "./TableView";
 import moment from "moment";
 import Selectaction from "../../components/Selectaction";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { Deletesku } from "../../server/product";
+import Loader from "../../components/Loader";
 
 
 const buttonList = [
@@ -97,7 +98,7 @@ const Product = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [photo]);
+  }, []);
 
   const handleSelectAll = (e) => {
     if (e?.target?.type === "checkbox") {
@@ -116,35 +117,22 @@ const Product = () => {
   };
 
   const handleDelete = async (urls) => {
-    if (urls.length === 0) return;
-    const userDocRef = doc(firestore, "Users", currentUseruid);
     try {
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const updatedSkus = userData.skus.map((sku) =>{
+      setLoading(true);
+      await Deletesku({
+        urls,
+        currentUseruid,
+        firestore,
+      });
 
-          if(urls.includes(sku.sku)){
-            return ({
-              ...sku,
-              photos: sku.photos.map((photo) => ({
-                ...photo,
-                isDeleted: true,
-              })),
-            })
-          }
-          return sku
-        })
-  
-        await updateDoc(userDocRef, {
-          skus: updatedSkus,
-        }).then(() => {
-          handleShowPhoto();
-          setSelectedItems([]);
-        });
-      }
+      handleShowPhoto();
+      setSelectedItems([]);
+
     } catch (error) {
       console.error("Error deleting photos:", error);
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -159,16 +147,22 @@ const Product = () => {
 
   return (
     <div>
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <Loader />
+        </div>
+      )}
       <div className="flex flex-wrap items-center sm:justify-between  gap-2">
         <div className="flex items-center">
           <Checkbox
+            className="cursor-pointer"
             checked={
               selectedItems.length === filteredPhoto.length &&
               filteredPhoto.length > 0
             }
             onChange={handleSelectAll}
           />
-          <label className="ml-2 text-sm text-gray-500 sm:text-base hidden sm:block">
+          <label className="ml-2 text-sm text-gray-500 sm:text-base hidden sm:block cursor-pointer" onClick={handleSelectAll}>
             Select All
           </label>
         </div>
@@ -196,7 +190,7 @@ const Product = () => {
         className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
         style={{ height: "calc(100vh - 120px)" }}
       >
-        {viewType === "table" && (
+        {filteredPhoto.length > 0 ? (viewType === "table" && (
           <TableView
             filteredPhoto={filteredPhoto}
             selectedItems={selectedItems}
@@ -207,6 +201,8 @@ const Product = () => {
             loading={loading}
             setSelectedItems={setSelectedItems}
           />
+        )) : !loading && (
+          (<p className="text-center text-gray-500 text-sm">No photos found</p>)
         )}
 
         {viewType === "grid" &&

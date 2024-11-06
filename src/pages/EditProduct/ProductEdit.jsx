@@ -8,7 +8,7 @@ const ProductEdit = ({setFormData, formData}) => {
           [name]: value,
         }));
       };
-  return  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 w-full">
+  return  <div className=" rounded-lg shadow p-6 w-full">
   <form className="space-y-6">
     <div>
       <div className="mb-2 flex justify-between items-center">

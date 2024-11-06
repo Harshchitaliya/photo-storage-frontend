@@ -1,5 +1,6 @@
 import { Checkbox, Table, Button } from "flowbite-react";
 import Loader from "../../components/Loader";
+
 import {
   ShareIcon,
   DownloadIcon,
@@ -75,6 +76,7 @@ const TableView = (props) => {
               onChange={handleSelectAll}
             />
           </Table.HeadCell>
+
           <Table.HeadCell>Media</Table.HeadCell>
           <Table.HeadCell
             className="cursor-pointer hover:bg-gray-700"
@@ -155,9 +157,9 @@ const TableView = (props) => {
                   ) : (
                     <img
                       src={item.photos?.[0]?.downloadUrl}
-                    alt="product"
+                      alt="product"
                       className="w-16 h-16 object-cover rounded"
-                      />
+                    />
                   )}
                 </Table.Cell>
                 <Table.Cell>{item.sku || "-"}</Table.Cell>
