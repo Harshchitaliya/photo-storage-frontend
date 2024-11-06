@@ -7,6 +7,7 @@ import Loader from "../../components/Loader";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, permentDelete, deletePhoto } from "../../server";
 import Selectaction from "../../components/Selectaction";
+
 const buttonList = [
   { type: "all", label: "All" },
   { type: "image", label: "Image" },
