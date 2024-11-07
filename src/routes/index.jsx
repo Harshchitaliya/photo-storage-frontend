@@ -10,7 +10,9 @@ import EditProduct from "../pages/EditProduct";
 import Recycle from "../pages/Recycle";
 import Profile from "../pages/Profile";
 import EditImg from "../pages/EditImg";
-function AppRoutes() {
+import Catalog from "../pages/Catalog";
+
+const AppRoutes = () => {
   const { loading, currentUseruid } = useAuth();
   // useEffect(() => {
   //   const handleKeyDown = (e) => {
@@ -63,6 +65,7 @@ function AppRoutes() {
         path="/profile"
         element={currentUseruid ? <Profile /> : <Login />}
       />
+      <Route path="/catalog" element={currentUseruid ? <Catalog /> : <Login />} />
       <Route path="*" element={<Home />} />
     </Routes>
   );

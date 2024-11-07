@@ -1,8 +1,7 @@
-/** @jsx React.createElement */
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 
-export default function Layout({ children }) {
+const Layout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -13,3 +12,4 @@ export default function Layout({ children }) {
     </>
   );
 } 
+export default Layout;
