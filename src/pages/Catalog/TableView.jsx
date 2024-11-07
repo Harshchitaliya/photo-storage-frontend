@@ -13,7 +13,6 @@ import Selectaction from "../../components/Selectaction";
 import { EditIcon } from "../../components/Icon";
 const TableView = (props) => {
   const {
-    selectedItems = [],
     catalogs = [],
     loading = false,
     deleteCatalog,
@@ -23,6 +22,25 @@ const TableView = (props) => {
   const [sortDirection, setSortDirection] = useState("asc");
   const [selectedIds, setSelectedIds] = useState([]);
   const navigate = useNavigate();
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "a") {
+        e.preventDefault();
+        setSelectedIds(catalogs.map(item=>item.id))
+      }
+
+      if (e.keyCode === 27) {
+        e.preventDefault();
+        setSelectedIds([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleSort = (field) => {
     if (sortField === field) {
