@@ -210,7 +210,6 @@ const Product = () => {
             filteredPhoto={filteredPhoto}
             selectedItems={selectedItems}
             handleSelectAll={handleSelectAll}
-            handleShare={handleShare}
             handleDownload={handleDownload}
             handleDelete={handleDelete}
             loading={loading}
@@ -229,7 +228,6 @@ const Product = () => {
               checked={selectedItems}
               handleDownload={() => handleDownload(photoUrl.downloadUrl)}
               handleDelete={() => handleDelete([photoUrl.sku])}
-              handleShare={() => handleShare(photoUrl.url)}
               setDrawerOpen={()=>navigate(`/products/${photoUrl?.sku}/edit`)}
               type={"product"}
             />
@@ -239,7 +237,6 @@ const Product = () => {
         selectedItems={selectedItems}
         handleCancel={() => setSelectedItems([])}
         handleDelete={() => handleDelete(selectedItems)}
-        handleShare={handleShare}
         handleDownload={handleDownload}
       />
 
