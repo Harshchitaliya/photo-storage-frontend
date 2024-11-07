@@ -157,16 +157,47 @@ const Gallery = () => {
         try {
             // Convert single imageRef to array if needed
             const refs = Array.isArray(imageRefs) ? imageRefs : [imageRefs];
+            const proxyUrl = 'http://localhost:5001/fetch-image'
 
             // Get all files
             const files = await Promise.all(
                 refs.map(async (imageRef) => {
                     const storageRef = ref(storage, imageRef);
                     const downloadUrl = await getDownloadURL(storageRef);
-                    const response = await fetch(downloadUrl);
+                    const response = await fetch(`${proxyUrl}?url=${encodeURIComponent(downloadUrl)}`);
                     const blob = await response.blob();
+
+                    // Create image element from blob
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    
+                    // Create object URL from blob
+                    const blobUrl = URL.createObjectURL(blob);
+                    
+                    // Wait for image to load
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = blobUrl;
+                    });
+
+                    // Clean up object URL
+                    URL.revokeObjectURL(blobUrl);
+
+                    // Create canvas and draw image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert canvas to blob
+                    const processedBlob = await new Promise(resolve => 
+                        canvas.toBlob(resolve, 'image/jpeg', 0.8)
+                    );
+
                     return new File(
-                        [blob],
+                        [processedBlob],
                         imageRef.split('/').pop() || 'image.jpg',
                         {
                             type: 'image/jpeg',
