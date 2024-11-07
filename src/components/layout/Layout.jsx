@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 
-const Layout = ({ children }) => {
+export default function Layout({ children }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -11,6 +11,4 @@ const Layout = ({ children }) => {
       </div>
     </>
   );
-};
-
-export default Layout; 
+} 
