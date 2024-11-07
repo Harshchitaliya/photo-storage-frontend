@@ -24,7 +24,7 @@ const DrawerComponent = (props) => {
 
   console.log(drawerOpen);
   return (
-    <Drawer open={drawerOpen} position="right" className="sm:w-2/4 w-full">
+    <Drawer open={drawerOpen} onClose={()=>handleClose(true)}  position="right" className="sm:w-2/4 w-full">
       <Drawer.Items>
         <div className="flex justify-end p-4">
           <button onClick={handleClose} className="text-gray-500 hover:text-gray-700">

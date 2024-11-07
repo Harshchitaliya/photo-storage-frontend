@@ -159,44 +159,26 @@ const Gallery = () => {
     }, [currentUseruid]);
 
     const handleUpload = async (files, metadata, currentUseruid) => {
-        // Call MPN 10 times
-        for (let i = 0; i < 10; i++) {
-            const mpn = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-            console.log(`Generated MPN ${i + 1}: ${mpn}`);
-            try {
-                // Upload each file with the same MPN
-                for (const file of files) {
-                    console.log(file);
-                    // Update file metadata
-                    const updatedFile = new File([file], file.name, {
-                        type: file.type,
-                        lastModified: Date.now()
-                    });
-                    console.log("Updated file metadata:", {
-                        name: updatedFile.name,
-                        lastModified: updatedFile.lastModified,
-                        lastModifiedDate: new Date(updatedFile.lastModified),
-                        size: updatedFile.size,
-                        type: updatedFile.type
-                    });
-                    const photoPath = await uploadPhoto([ {
-                        name: (mpn+updatedFile.name),
-                        lastModified: updatedFile.lastModified,
-                        lastModifiedDate: new Date(updatedFile.lastModified),
-                        size: updatedFile.size,
-                        type: updatedFile.type
-                    }], metadata, currentUseruid);
-                    await saveProductMetadata({...metadata, sku: mpn}, photoPath, currentUseruid);
-                }
-                console.log("Photos and metadata saved successfully!");
-                
-                // Fetch updated photos after each batch upload
-                await handleShowPhoto();
-            } catch (error) {
-                console.error("Error handling upload:", error);
-            }
+        try {
+            const photoPath =await uploadPhoto(files, metadata, currentUseruid);
+            await saveProductMetadata(metadata, photoPath, currentUseruid);
+            console.log("Photo and metadata saved successfully!");
+
+            // Clear the form and files after successful upload
+        setFiles([]);
+        setMetadata({
+            sku: '',
+            title: '',
+            description: '',
+            quantity: '',
+            price: ''
+        });
+        // Fetch updated photos
+        await handleShowPhoto();
+
+        } catch (error) {
+            console.error("Error handling upload:", error);
         }
-        
     };
 
     const handleSubmit = async (e) => {
