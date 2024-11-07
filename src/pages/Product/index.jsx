@@ -25,7 +25,7 @@ const Product = () => {
   const [allFilter, setAllFilter] = useState({});
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
-  const [viewType, setViewType] = useState("grid");
+  const [viewType, setViewType] = useState("table");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -226,7 +226,6 @@ const Product = () => {
               key={index}
               checkboxClick={setSelectedItems}
               checked={selectedItems}
-              handleDownload={() => handleDownload(photoUrl.downloadUrl)}
               handleDelete={() => handleDelete([photoUrl.sku])}
               setDrawerOpen={()=>navigate(`/products/${photoUrl?.sku}/edit`)}
               type={"product"}
@@ -237,7 +236,6 @@ const Product = () => {
         selectedItems={selectedItems}
         handleCancel={() => setSelectedItems([])}
         handleDelete={() => handleDelete(selectedItems)}
-        handleDownload={handleDownload}
       />
 
       <FilterModal

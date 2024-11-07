@@ -1,6 +1,7 @@
 import { ref, getDownloadURL, deleteObject } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { isVideo } from "../utils";
+import JSZip from 'jszip';
 
 
 
@@ -67,7 +68,7 @@ export const deletePhoto = async (props) => {
         ...sku,
         photos: sku.photos.map((photo) => ({
           ...photo,
-          isDeleted: isrecycle?(urls.includes(photo.url) ? false : photo.isDeleted):(urls.includes(photo.url) ? true : photo.isDeleted)
+          isDeleted: isrecycle ? (urls.includes(photo.url) ? false : photo.isDeleted) : (urls.includes(photo.url) ? true : photo.isDeleted)
         })),
       }));
       await updateDoc(userDocRef, {
@@ -116,11 +117,11 @@ export const showsku = async (props) => {
   const { currentUseruid, firestore, storage } = props;
   const userDocRef = doc(firestore, "Users", currentUseruid);
   const userDoc = await getDoc(userDocRef);
-  
+
   if (userDoc.exists()) {
     const userData = userDoc.data();
     const skus = userData.skus;
-    const photos = await Promise.all(skus.map(async (sku) => { 
+    const photos = await Promise.all(skus.map(async (sku) => {
       const activePhotos = await Promise.all(
         sku.photos
           .filter(photo => !photo.isDeleted)
@@ -156,4 +157,70 @@ export const usedata = async (props) => {
     return userData;
   }
   return null;
+};
+
+export const downloadFiles = async ({ urls, storage, proxyUrl = 'http://localhost:5001/fetch-image' }) => {
+  urls = Array.isArray(urls) ? urls : [urls];
+
+  // Helper function to get file blob
+  const getFileBlob = async (url) => {
+    const storageRef = ref(storage, url);
+    const downloadUrl = await getDownloadURL(storageRef);
+    const response = await fetch(`${proxyUrl}?url=${encodeURIComponent(downloadUrl)}`);
+    return response.blob();
+  };
+
+  // Helper function to download single file
+  const downloadSingleFile = async (url) => {
+    const blob = await getFileBlob(url);
+    const filename = url.split('/').pop() || 'file.jpg';
+
+    const downloadUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = downloadUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(downloadUrl);
+  };
+
+  // Helper function to download multiple files
+  const downloadMultipleFiles = async (fileUrls) => {
+    const zip = new JSZip();
+
+    const filePromises = fileUrls.map(async (fileUrl) => {
+      const blob = await getFileBlob(fileUrl);
+      const filename = fileUrl.split('/').pop() || 'file.jpg';
+      return { blob, filename };
+    });
+
+    const files = await Promise.all(filePromises);
+
+    files.forEach(({ blob, filename }) => {
+      zip.file(filename, blob);
+    });
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const zipUrl = URL.createObjectURL(zipBlob);
+
+    const a = document.createElement('a');
+    a.href = zipUrl;
+    a.download = 'files.zip';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(zipUrl);
+  };
+
+  try {
+    if (urls.length === 1) {
+      await downloadSingleFile(urls[0]);
+    } else {
+      await downloadMultipleFiles(urls);
+    }
+  } catch (error) {
+    console.error('Error downloading files:', error);
+    throw error;
+  }
 };

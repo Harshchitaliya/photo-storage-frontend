@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { DeleteIcon } from "../../components/Icon";
-
+import { storage } from "../../context/auth/connection/connection";
+import { downloadFiles } from "../../server/photo";
+import Loader from "../../components/Loader";
+import { DownloadIcon } from "../../components/Icon";
 const ImageGallery = ({
   allPhotos,
   setFormData,
@@ -10,13 +13,33 @@ const ImageGallery = ({
   const [photos, setPhotos] = useState(
     allPhotos?.filter((photo) => !photo.isDeleted) || []
   );
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     setPhotos(allPhotos?.filter((photo) => !photo.isDeleted) || []);
   }, [allPhotos]);
 
+  const handleDownload = async (url) => {
+    try {
+      setLoading(true);
+      await downloadFiles({ urls: [url], storage });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full">
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <Loader />
+        </div>
+      )}
       <div className="w-full h-[500px] bg-white dark:bg-gray-800 rounded-lg shadow mb-4 p-4">
+        <button onClick={() => handleDownload(photos[selectedImageIndex].url)}>
+          <DownloadIcon />
+        </button>
         {photos.length > 0 ? (
           photos?.[selectedImageIndex]?.isVideo ? (
             <video
@@ -38,15 +61,13 @@ const ImageGallery = ({
           </div>
         )}
       </div>
-
       <div className="flex gap-4 overflow-x-auto pb-4">
         {photos.map((image, index) => (
           <div
             key={index}
             className={`relative min-w-[120px] h-[120px] rounded-lg overflow-hidden cursor-pointer border-2 group
-        ${
-          selectedImageIndex === index ? "border-gray-500" : "border-gray-200"
-        }`}
+        ${selectedImageIndex === index ? "border-gray-500" : "border-gray-200"
+              }`}
             onClick={() => setSelectedImageIndex(index)}
           >
             {image.isVideo ? (

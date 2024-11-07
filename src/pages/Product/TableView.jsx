@@ -16,8 +16,6 @@ const TableView = (props) => {
     filteredPhoto,
     selectedItems,
     handleSelectAll,
-    handleShare,
-    handleDownload,
     handleDelete,
     loading,
     setSelectedItems,
@@ -76,7 +74,6 @@ const TableView = (props) => {
               onChange={handleSelectAll}
             />
           </Table.HeadCell>
-
           <Table.HeadCell>Media</Table.HeadCell>
           <Table.HeadCell
             className="cursor-pointer hover:bg-gray-700"
@@ -161,7 +158,7 @@ const TableView = (props) => {
                   />
                 </Table.Cell>
                 <Table.Cell className="cursor-pointer" onClick={() => navigate(`/products/${item.sku}/edit`)}>
-                  {item.isVideo ? ( 
+                  {item.isVideo ? (
                     <video src={item.photos?.[0]?.downloadUrl} className="w-16 h-16 object-cover rounded" />
                   ) : (
                     <img
@@ -179,12 +176,6 @@ const TableView = (props) => {
                 <Table.Cell>{item.price || 0}</Table.Cell>
                 <Table.Cell>
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => handleDownload(item.downloadUrl)}
-                    >
-                      <DownloadIcon className="w-4 h-4" />
-                    </Button>
                     <Button
                       size="sm"
                       color="failure"
