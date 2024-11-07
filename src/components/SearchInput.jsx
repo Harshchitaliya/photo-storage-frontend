@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { SearchIcon, FilterIcon } from "./Icons";
+import { SearchIcon, FilterIcon } from "./Icon";
 const SearchInput = ({ onSearch, filter }) => {
   useEffect(() => {
     document.getElementById("search").focus();

@@ -10,7 +10,7 @@ import {
   SidebarIcon,
   LoginIcon,
   LogoutIcon,
-} from "../Icons";
+} from "../Icon";
 import Portal from "../Portal/Portal";
 import { useEffect, useState } from "react";
 

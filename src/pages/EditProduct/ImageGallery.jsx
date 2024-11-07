@@ -1,36 +1,21 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "flowbite-react";
-import { RemoveBackgroundIcon, DeleteIcon } from "../../components/Icons";
+import { DeleteIcon } from "../../components/Icon";
 
-const ImageGallery = ({ allPhotos, setFormData, id }) => {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [photos, setPhotos] = useState(allPhotos?.filter((photo) => !photo.isDeleted) || []);
+const ImageGallery = ({
+  allPhotos,
+  setFormData,
+  selectedImageIndex,
+  setSelectedImageIndex,
+}) => {
+  const [photos, setPhotos] = useState(
+    allPhotos?.filter((photo) => !photo.isDeleted) || []
+  );
   useEffect(() => {
     setPhotos(allPhotos?.filter((photo) => !photo.isDeleted) || []);
   }, [allPhotos]);
-  const navigate = useNavigate();
-
-  const handleRemoveBackground = () => {
-    const photoIndex = photos.findIndex((photo) => photo.downloadUrl === photos[selectedImageIndex]?.downloadUrl);
-    if(photoIndex !== -1 && id){
-      navigate(`/products/${id}/${photoIndex}/edit`);
-    }
-  };
 
   return (
     <div className="w-full">
-      {photos.length > 0 && (
-        <div className="pt-16 mb-5 flex justify-end">
-          <Button onClick={handleRemoveBackground}>
-            <RemoveBackgroundIcon />
-            <span className="text-sm flex items-center ml-1">
-              Edit Image
-            </span>
-          </Button>
-        </div>
-      )}
-
       <div className="w-full h-[500px] bg-white dark:bg-gray-800 rounded-lg shadow mb-4 p-4">
         {photos.length > 0 ? (
           photos?.[selectedImageIndex]?.isVideo ? (

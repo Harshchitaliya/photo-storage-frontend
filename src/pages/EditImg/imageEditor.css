@@ -1,94 +1,94 @@
 /* Custom range input styling */
 input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: #e5e7eb;
-  outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #2563eb;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-}
-
-/* Prevent image dragging */
-img {
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-/* Smooth transitions */
-.transition-transform {
-  transition: transform 0.2s ease-out;
-}
-
-.slider-input {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: #e5e7eb;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.slider-input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #2563eb;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border: 2px solid white;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-}
-
-.slider-input::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  background: #1d4ed8;
-}
-
-.slider-input:active::-webkit-slider-thumb {
-  transform: scale(0.9);
-}
-
-.transition-all {
-  transition: all 0.2s ease-out;
-}
-
-/* Add to your existing CSS */
-
-.hidden {
-  display: none;
-}
-
-/* Background removal specific styles */
-.bg-checker {
-  background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
-    linear-gradient(-45deg, #ccc 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #ccc 75%),
-    linear-gradient(-45deg, transparent 75%, #ccc 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-}
-
-/* Add loading spinner animation */
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-} 
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: #e5e7eb;
+    outline: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Prevent image dragging */
+  img {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  
+  /* Smooth transitions */
+  .transition-transform {
+    transition: transform 0.2s ease-out;
+  }
+  
+  .slider-input {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: #e5e7eb;
+    outline: none;
+    transition: all 0.2s;
+  }
+  
+  .slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid white;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .slider-input::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    background: #1d4ed8;
+  }
+  
+  .slider-input:active::-webkit-slider-thumb {
+    transform: scale(0.9);
+  }
+  
+  .transition-all {
+    transition: all 0.2s ease-out;
+  }
+  
+  /* Add to your existing CSS */
+  
+  .hidden {
+    display: none;
+  }
+  
+  /* Background removal specific styles */
+  .bg-checker {
+    background-image: linear-gradient(45deg, #ccc 25%, transparent 25%),
+      linear-gradient(-45deg, #ccc 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ccc 75%),
+      linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  
+  /* Add loading spinner animation */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  } 

@@ -1,6 +1,6 @@
 import { Button, Drawer } from "flowbite-react";
 import moment from "moment";
-import { DownloadIcon, ShareIcon, DeleteIcon } from "../../components/Icons";
+import { DownloadIcon, ShareIcon, DeleteIcon } from "../../components/Icon";
 import { useState, useEffect, useRef } from "react";
 
 const DrawerComponent = (props) => {

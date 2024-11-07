@@ -8,7 +8,7 @@ import {
   SortDefaultIcon,
   SortAscIcon,
   SortDescIcon,
-} from "../../components/Icons";
+} from "../../components/Icon";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const TableView = (props) => {

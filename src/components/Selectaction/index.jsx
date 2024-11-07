@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Toast, Tooltip } from "flowbite-react";
-import { DownloadIcon, ShareIcon, DeleteIcon, CancelIcon, RecycleIcon } from "../Icons";
+import { DownloadIcon, ShareIcon, DeleteIcon, CancelIcon, RecycleIcon } from "../Icon";
 
 const Selectaction = (props) => {
   const {
