@@ -90,7 +90,7 @@ const TableView = (props) => {
         <Table.Head>
           <Table.HeadCell className="w-16">
             <div className="flex items-center">
-              <Checkbox checked={selectedIds.length===catalogs.length} onChange={()=>setSelectedIds(catalogs.map(item=>item.id))} />
+              <Checkbox checked={selectedIds.length===catalogs.length && catalogs.length!==0} onChange={()=>setSelectedIds(catalogs.map(item=>item.id))} />
             </div>
           </Table.HeadCell>
 

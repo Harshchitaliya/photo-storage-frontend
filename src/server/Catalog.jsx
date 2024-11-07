@@ -17,6 +17,12 @@ export const createNewCatalog = async(props)=>{
       });
     }
 }
+export const getIdCatalog = async(props)=>{
+  const { currentUseruid, firestore, id } = props;
+  const userDocRef = doc(firestore, "Users", currentUseruid);
+  const userDoc = await getDoc(userDocRef);
+  return userDoc.data().catalogs.find(item=>item.id===id)
+}
 
 export const editCatalog = async(props)=>{
     const { currentUseruid, firestore, catalog } = props;
