@@ -2,7 +2,7 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { useState, useEffect, useCallback } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import ProductCard from "../../components/ProductCard";
-import { TableIcon, GridIcon } from "../../components/Icons";
+import { TableIcon, GridIcon } from "../../components/Icon";
 import { Button, Checkbox } from "flowbite-react";
 import FilterModal from "./FilterModal";
 import SearchInput from "../../components/SearchInput";

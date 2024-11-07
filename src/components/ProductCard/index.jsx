@@ -10,7 +10,7 @@ import {
   DownloadIcon,
   FavoriteIcon,
   RecycleIcon,
-} from "../Icons";
+} from "../Icon";
 import { Card, Checkbox, Dropdown } from "flowbite-react";
 
 const ProductCard = (pages) => {
