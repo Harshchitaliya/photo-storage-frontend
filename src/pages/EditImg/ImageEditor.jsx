@@ -5,7 +5,7 @@ import {
     ZoomOutIcon,
     RotateIcon,
     FlipIcon
-} from "../../components/Icons";
+} from "../../components/Icon";
 import "./imageEditor.css";
 import { Tabs } from "flowbite-react";
 

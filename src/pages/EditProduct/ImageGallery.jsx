@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { DeleteIcon } from "../../components/Icons";
+import { DeleteIcon } from "../../components/Icon";
 
 const ImageGallery = ({
   allPhotos,
