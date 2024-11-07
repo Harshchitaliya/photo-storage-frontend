@@ -4,6 +4,7 @@ import { showsku } from "../../server/photo";
 import ProductCard from "../../components/ProductCard";
 import { Button } from "flowbite-react";
 import { storage, firestore } from "../../context/auth/connection/connection";
+import { createNewCatalog } from "../../server";
 
 const CreateCatalog = () => {
   const [filteredPhoto, setFilteredPhoto] = useState([]);
@@ -30,8 +31,13 @@ const CreateCatalog = () => {
 
     setFilteredPhoto(allphotos);
   };
-const handleSave=()=>{
-  createNewCatalog({currentUseruid,firestore,storage,catalog:formData});
+const handleSave=async()=>{
+    try{
+        await createNewCatalog({currentUseruid,firestore,storage,catalog:{...formData,skus:selectedItems}});
+        window.history.back();
+    }catch(error){
+        console.log(error);
+    }
 }
   useEffect(() => {
     getSku();
