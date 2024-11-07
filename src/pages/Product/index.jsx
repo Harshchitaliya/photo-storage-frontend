@@ -12,6 +12,7 @@ import moment from "moment";
 import Selectaction from "../../components/Selectaction";
 import { Deletesku } from "../../server/product";
 import Loader from "../../components/Loader";
+import { useNavigate } from "react-router-dom";
 
 const buttonList = [
   { type: "table", icon: <TableIcon /> },
@@ -21,11 +22,12 @@ const Product = () => {
   const [photo, setPhoto] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [allFilter, setAllFilter] = useState({});
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [filteredPhoto, setFilteredPhoto] = useState([]);
   const [viewType, setViewType] = useState("grid");
+  const navigate = useNavigate();
+
   useEffect(() => {
     let filtered = photo;
     if (allFilter.search) {
@@ -53,11 +55,7 @@ const Product = () => {
 
   const { currentUseruid } = useAuth();
 
-  useEffect(() => {
-    if (drawerOpen) {
-      setSelectedItems([]);
-    }
-  }, [drawerOpen]);
+ 
 
   useEffect(() => {
     handleShowPhoto();
@@ -232,7 +230,7 @@ const Product = () => {
               handleDownload={() => handleDownload(photoUrl.downloadUrl)}
               handleDelete={() => handleDelete([photoUrl.sku])}
               handleShare={() => handleShare(photoUrl.url)}
-              setDrawerOpen={setDrawerOpen}
+              setDrawerOpen={()=>navigate(`/products/${photoUrl?.sku}/edit`)}
               type={"product"}
             />
           ))}

@@ -11,7 +11,9 @@ import Recycle from "../pages/Recycle";
 import Profile from "../pages/Profile";
 import EditImg from "../pages/EditImg";
 import Catalog from "../pages/Catalog";
-
+import AddCatalog from "../pages/Catalog/AddCatalog";
+import EditCatalog from "../pages/Catalog/EditCatalog";
+import CreateCatalog from "../pages/Catalog/CreateCatalog";
 const AppRoutes = () => {
   const { loading, currentUseruid } = useAuth();
   // useEffect(() => {
@@ -66,6 +68,9 @@ const AppRoutes = () => {
         element={currentUseruid ? <Profile /> : <Login />}
       />
       <Route path="/catalog" element={currentUseruid ? <Catalog /> : <Login />} />
+      <Route path="/catalog/:id/add" element={currentUseruid ? <AddCatalog /> : <Login />} />
+      <Route path="/catalog/:id/edit" element={currentUseruid ? <EditCatalog /> : <Login />} />
+      <Route path="/catalog/create" element={currentUseruid ? <CreateCatalog /> : <Login />} />
       <Route path="*" element={<Home />} />
     </Routes>
   );

@@ -89,6 +89,15 @@ const TableView = (props) => {
           </Table.HeadCell>
           <Table.HeadCell
             className="cursor-pointer hover:bg-gray-700"
+            onClick={() => handleSort("title")}
+          >
+            <div className="flex items-center">
+              Title
+              <SortIcon field="title" />
+            </div>
+          </Table.HeadCell>
+          <Table.HeadCell
+            className="cursor-pointer hover:bg-gray-700"
             onClick={() => handleSort("description")}
           >
             <div className="flex items-center">
@@ -163,6 +172,7 @@ const TableView = (props) => {
                   )}
                 </Table.Cell>
                 <Table.Cell>{item.sku || "-"}</Table.Cell>
+                <Table.Cell>{item.title || "-"}</Table.Cell>
                 <Table.Cell>{item.description || "-"}</Table.Cell>
                 <Table.Cell>{item.type || "-"}</Table.Cell>
                 <Table.Cell>{item.quantity || "0"}</Table.Cell>
