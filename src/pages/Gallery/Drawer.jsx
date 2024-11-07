@@ -1,7 +1,7 @@
 import { Button, Drawer } from "flowbite-react";
 import moment from "moment";
 import { DownloadIcon, ShareIcon, DeleteIcon } from "../../components/Icon";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 const DrawerComponent = (props) => {
   const { drawerOpen, setDrawerOpen, handleDownload, handleShare, handleDelete } = props;
@@ -72,13 +72,13 @@ const DrawerComponent = (props) => {
               )}
             </div>
             <div className="flex gap-2 mt-4 justify-end">
-              <Button onClick={handleDownload}>
+              <Button onClick={() => handleDownload(drawerOpen?.downloadUrl)}>
                 <DownloadIcon />
             </Button>
-            <Button onClick={handleShare}   >
+            <Button onClick={() => handleShare(drawerOpen?.url)}   >
                 <ShareIcon />
             </Button>
-            <Button onClick={handleDelete}   >
+            <Button onClick={() => handleDelete(drawerOpen?.url)}   >
                 <DeleteIcon />
             </Button>
             </div>  

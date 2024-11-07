@@ -39,28 +39,28 @@ const ProductCard = (pages) => {
       handler: handleDelete,
       icon: <DeleteIcon />,
       text: "Delete",
-      onClick: () => handleDelete(photoUrl.url  ),
+      onClick: () => handleDelete(photoUrl.url),
     },
     {
       handler: handleShare,
       icon: <ShareIcon />,
       text: "Share",
-      onClick: () => handleShare(photoUrl.url ),
+      onClick: () => handleShare(photoUrl.url),
     },
     {
       handler: handleFavorite,
       icon: <FavoriteIcon />,
       text: "Favorite",
-      onClick: () => handleFavorite(photoUrl.url ),
+      onClick: () => handleFavorite(photoUrl.url),
     },
     {
       handler: handleRecycle,
       icon: <RecycleIcon />,
       text: "Recycle",
-      onClick: () => handleRecycle(photoUrl.url ),
+      onClick: () => handleRecycle(photoUrl.url),
     },
   ].filter((item) => item.handler);
-  
+
   const handleCheckboxClick = (url) => {
     if (checked.includes(type === "product" ? photoUrl.sku : photoUrl.url)) {
       checkboxClick((prev) => prev.filter((item) => item !== url));
@@ -68,7 +68,7 @@ const ProductCard = (pages) => {
       checkboxClick((prev) => [...prev, url]);
     }
   };
-  
+
   return (
     <Card className="max-w-sm dark:bg-gray-800">
       <div className="flex items-center justify-between">
@@ -92,22 +92,22 @@ const ProductCard = (pages) => {
             )}
           >
             {buttonList.map(
-              ({ icon, text, onClick }) =>(
-                  <Dropdown.Item
-                    key={text}
-                    className="w-40 gap-2 text-white"
-                    onClick={onClick}
-                  >
-                    {icon} {text}
-                  </Dropdown.Item>
-                )
+              ({ icon, text, onClick }) => (
+                <Dropdown.Item
+                  key={text}
+                  className="w-40 gap-2 text-white"
+                  onClick={onClick}
+                >
+                  {icon} {text}
+                </Dropdown.Item>
+              )
             )}
           </Dropdown>
         )}
       </div>
       <div
         className="bg-bg rounded-lg w-52 h-48 flex justify-center items-center relative cursor-pointer transition-transform duration-300 hover:scale-100 hover:shadow-lg"
-        
+
       >
         {photoUrl.isVideo ? (
           <div className="relative w-full h-full">
@@ -117,17 +117,17 @@ const ProductCard = (pages) => {
               controls={false}
               preload="metadata"
               playsInline
-              onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
+              onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl)}
             >
               Your browser does not support the video tag.
             </video>
           </div>
         ) : (
           <img
-            src={photoUrl.photos?.[0]?.downloadUrl ||photoUrl.downloadUrl}
+            src={photoUrl.photos?.[0]?.downloadUrl || photoUrl.downloadUrl}
             alt="Preview"
             className="w-full h-full object-cover rounded-lg transition-opacity duration-300 hover:opacity-80"
-            onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl) }
+            onClick={() => type === "product" ? navigate(`/products/${photoUrl.sku}/edit`) : setDrawerOpen?.(photoUrl)}
           />
         )}
       </div>

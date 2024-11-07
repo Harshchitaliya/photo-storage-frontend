@@ -171,12 +171,6 @@ const TableView = (props) => {
                   <div className="flex gap-2">
                     <Button
                       size="sm"
-                      onClick={() => handleShare(item.downloadUrl)}
-                    >
-                      <ShareIcon className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
                       onClick={() => handleDownload(item.downloadUrl)}
                     >
                       <DownloadIcon className="w-4 h-4" />

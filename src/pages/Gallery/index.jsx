@@ -115,6 +115,7 @@ const Gallery = () => {
             await deletePhoto({ urls, currentUseruid, firestore, isrecycle });
             await handleShowPhoto();
             setSelectedItems([]);
+            setDrawerOpen(false);
         } catch (error) {
             console.log(error);
         } finally {
@@ -167,12 +168,46 @@ const Gallery = () => {
         }
     };
 
-    const handleShare = async (url) => {
+    const handleShare = async (imageRefs) => {
         setLoading(true);
         try {
-            console.log(url);
+            // Convert single imageRef to array if needed
+            const refs = Array.isArray(imageRefs) ? imageRefs : [imageRefs];
+            
+            // Get all files
+            const files = await Promise.all(
+                refs.map(async (imageRef) => {
+                    const storageRef = ref(storage, imageRef);
+                    const downloadUrl = await getDownloadURL(storageRef);
+                    const response = await fetch(downloadUrl);
+                    const blob = await response.blob();
+                    return new File(
+                        [blob],
+                        imageRef.split('/').pop() || 'image.jpg',
+                        {
+                            type: 'image/jpeg',
+                            lastModified: new Date().getTime()
+                        }
+                    );
+                })
+            );
+
+            // Check if sharing is supported
+            if (!navigator.canShare || !navigator.canShare({ files })) {
+                throw new Error('Your browser does not support sharing these files');
+            }
+
+            // Share the files
+            await navigator.share({
+                files,
+                title: files.length === 1 ? 'Share Image' : 'Share Images',
+                text: files.length === 1 ? 'Check out this image!' : 'Check out these images!'
+            });
+
         } catch (error) {
-            console.log(error);
+            console.error('Error sharing:', error);
+            // Provide user feedback
+            alert(error.message || 'Failed to share images. Please try again.');
         } finally {
             setLoading(false);
         }
