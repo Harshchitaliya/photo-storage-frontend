@@ -140,29 +140,65 @@ const Gallery = () => {
         }
     };
 
+    const getImageDataUri = async (url) => {
+        // Get download URL from Firebase storage
+        const storageRef = ref(storage, url);
+        const downloadUrl = await getDownloadURL(storageRef);
+        
+        const response = await fetch(`http://localhost:5001/fetch-image?url=${encodeURIComponent(downloadUrl)}`);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
     const handleDownload = async (urls) => {
         setLoading(true);
         try {
-            const urlArray = Array.isArray(urls) ? urls : [urls];
-
-            for (const url of urlArray) {
-                const storageRef = ref(storage, url);
-                try {
-                    setLoading(true);
-                    const downloadUrl = await getDownloadURL(storageRef);
-                    const filename = downloadUrl.split("/").pop();
-                    const atag = document.createElement("a");
-                    atag.href = downloadUrl;
-                    atag.setAttribute("download", filename);
-                    document.body.appendChild(atag);
-                    atag.click();
-                    document.body.removeChild(atag);
-                } catch (error) {
-                    console.error(`Error downloading ${url}:`, error);
-                }
-            }
+            urls = Array.isArray(urls) ? urls : [urls];
+            
+            await Promise.all(
+                urls.map(async (imageRef) => {
+                    // Get image data URI
+                    const dataUri = await getImageDataUri(imageRef);
+                    
+                    // Create canvas and load image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = dataUri;
+                    });
+                    
+                    // Set canvas dimensions
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    
+                    // Draw image to canvas
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Convert to blob and download
+                    canvas.toBlob((blob) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = imageRef.split('/').pop() || 'image.jpg';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 'image/jpeg', 0.95);
+                })
+            );
+            
         } catch (error) {
-            console.log(error);
+            console.error('Error downloading:', error);
         } finally {
             setLoading(false);
         }
