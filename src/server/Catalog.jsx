@@ -10,6 +10,7 @@ export const createNewCatalog = async(props)=>{
       if(!userData.catalogs){
         userData.catalogs=[];
       }
+      catalog.id =  Date.now().toString() + Math.random().toString(36).substring(2, 15);
       const updatedSkus = [...userData.catalogs,catalog];
       await updateDoc(userDocRef, {
         catalogs: updatedSkus,
