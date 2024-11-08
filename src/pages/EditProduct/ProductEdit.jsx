@@ -1,7 +1,6 @@
 import { TextInput, Label } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
-
 const ProductEdit = ({
   setFormData,
   formData,
@@ -44,7 +43,7 @@ const ProductEdit = ({
             id="sku"
             name="sku"
             value={formData.sku}
-            onChange={handleChange}
+            readOnly
             required
             className="relative"
           />

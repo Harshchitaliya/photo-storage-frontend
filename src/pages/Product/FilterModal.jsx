@@ -74,11 +74,14 @@ const FilterModal = ({ isOpen, setIsOpen, defaultFilters, onApply }) => {
               setAllFilters({ ...allFilters, type: e.target.value })
             }
           >
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <option value="FR">France</option>
-            <option value="DE">Germany</option>
+            <option value="">Select type...</option>
+            <option value="ring">Ring</option>
+            <option value="necklace">Necklace</option>
+            <option value="earring">Earring</option>
+            <option value="bracelet">Bracelet</option>
+            <option value="chain">Chain</option>
             <option value="other">Other</option>
+            <option value="none">None</option>
           </Select>
         </div>
         <div className="flex gap-4 w-full justify-between">
