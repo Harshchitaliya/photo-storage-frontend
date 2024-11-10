@@ -22,7 +22,6 @@ const DrawerComponent = (props) => {
     }
   };
 
-  console.log(drawerOpen);
   return (
     <Drawer open={drawerOpen} onClose={()=>handleClose(true)}  position="right" className="sm:w-2/4 w-full">
       <Drawer.Items>
@@ -72,7 +71,7 @@ const DrawerComponent = (props) => {
               )}
             </div>
             <div className="flex gap-2 mt-4 justify-end">
-              <Button onClick={() => handleDownload(drawerOpen?.downloadUrl)}>
+              <Button onClick={() => handleDownload(drawerOpen?.url)}>
                 <DownloadIcon />
             </Button>
             <Button onClick={() => handleShare(drawerOpen?.url)}   >
