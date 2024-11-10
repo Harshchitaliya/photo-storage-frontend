@@ -38,10 +38,9 @@ const EditImg = () => {
       const response = await fetch(editedImage);
       const blob = await response.blob();
 
-      const fileName = `${
-        imageData.img.URL.split(".")[0]
-      }_edited_${new Date().getTime()}`;
-      const userFolder = `users/${currentUseruid}/${id}/${fileName}.png`;
+      const fileName = `${imageData.img.URL.split("/").pop().split(".")[0]}_edited_${new Date().getTime()}`;
+      console.log(fileName)
+      const userFolder = `users/${currentUseruid}/batches/${id.slice(0, -2)}/${id}/${fileName}.jpg`;
       const storageRef = ref(storage, userFolder);
 
       await uploadBytes(storageRef, blob);
