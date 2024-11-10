@@ -8,19 +8,22 @@ export const Deletesku = async (props) => {
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
             const userData = userDoc.data();
-            const updatedSkus = userData.skus.map((sku) => {
+            const updatedSkus = {};
 
-                if (urls.includes(sku.sku)) {
-                    return ({
-                        ...sku,
-                        photos: sku.photos.map((photo) => ({
+            // Convert object entries and update each SKU
+            Object.entries(userData.skus).forEach(([skuId, skuData]) => {
+                if (urls.includes(skuId)) {
+                    updatedSkus[skuId] = {
+                        ...skuData,
+                        photos: skuData.photos.map((photo) => ({
                             ...photo,
                             isDeleted: true,
                         })),
-                    })
+                    };
+                } else {
+                    updatedSkus[skuId] = skuData;
                 }
-                return sku
-            })
+            });
 
             await updateDoc(userDocRef, {
                 skus: updatedSkus,

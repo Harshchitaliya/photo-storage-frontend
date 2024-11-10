@@ -5,7 +5,7 @@ import { useAuth } from "../../context/auth/AuthContext";
 import { getImageData } from "../../server";
 import { firestore, storage } from "../../context/auth/connection/connection";
 import ImageEditor from "./ImageEditor";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 const EditImg = () => {
@@ -40,7 +40,7 @@ const EditImg = () => {
 
       const fileName = `${
         imageData.img.URL.split(".")[0]
-      }_edited_${new Date().getTime()}`; // Create unique filename
+      }_edited_${new Date().getTime()}`;
       const userFolder = `users/${currentUseruid}/${id}/${fileName}.png`;
       const storageRef = ref(storage, userFolder);
 
@@ -60,19 +60,18 @@ const EditImg = () => {
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const updatedSkus = userData.skus.map((sku) => {
-          if (sku.sku === id) {
-            return {
-              ...sku,
-              photos: [...sku.photos, newPhoto],
-            };
-          }
-          return sku;
-        });
-
-        await updateDoc(userRef, {
-          skus: updatedSkus,
-        });
+        const updatedSkus = { ...userData.skus };
+        
+        if (updatedSkus[id]) {
+          updatedSkus[id] = {
+            ...updatedSkus[id],
+            photos: [...updatedSkus[id].photos, newPhoto],
+          };
+          
+          await updateDoc(userRef, {
+            skus: updatedSkus,
+          });
+        }
       }
       window.history.back();
     } catch (error) {

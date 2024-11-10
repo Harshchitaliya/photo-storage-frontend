@@ -1,31 +1,63 @@
 import { useState, useEffect } from "react";
-import { DeleteIcon } from "../../components/Icon";
+import { DeleteIcon, DownloadIcon } from "../../components/Icon";
 import { storage } from "../../context/auth/connection/connection";
 import { downloadFiles } from "../../server/photo";
 import Loader from "../../components/Loader";
-import { DownloadIcon } from "../../components/Icon";
+
 const ImageGallery = ({
   allPhotos,
   setFormData,
   selectedImageIndex,
   setSelectedImageIndex,
 }) => {
-  const [photos, setPhotos] = useState(
-    allPhotos?.filter((photo) => !photo.isDeleted) || []
-  );
+  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
+  console.log(allPhotos)
+
   useEffect(() => {
-    setPhotos(allPhotos?.filter((photo) => !photo.isDeleted) || []);
+    const activePhotos = allPhotos?.filter(photo => !photo.isDeleted) || [];
+    setPhotos(activePhotos);
   }, [allPhotos]);
+  console.log(photos)
 
   const handleDownload = async (url) => {
     try {
       setLoading(true);
       await downloadFiles({ urls: [url], storage });
     } catch (error) {
-      console.error(error);
+      console.error("Error downloading file:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = (imageToDelete, index) => {
+    setFormData(prev => {
+      console.log('Previous photos:', prev.photos);
+      
+      const photoIndex = prev.photos.findIndex(photo => photo.url === imageToDelete.url);
+      
+      if (photoIndex === -1) {
+        console.error('Photo not found:', imageToDelete);
+        return prev;
+      }
+
+      const updatedPhotos = [...prev.photos];
+      updatedPhotos[photoIndex] = {
+        ...updatedPhotos[photoIndex],
+        isDeleted: true
+      };
+
+      console.log('Updated photos:', updatedPhotos);
+
+      return {
+        ...prev,
+        photos: updatedPhotos
+      };
+    });
+
+    if (index <= selectedImageIndex && photos.length > 1) {
+      setSelectedImageIndex(Math.max(0, selectedImageIndex - 1));
     }
   };
 
@@ -37,20 +69,25 @@ const ImageGallery = ({
         </div>
       )}
       <div className="w-full h-[500px] bg-white dark:bg-gray-800 rounded-lg shadow mb-4 p-4">
-        <button onClick={() => handleDownload(photos[selectedImageIndex].url)}>
-          <DownloadIcon />
-        </button>
+        {photos.length > 0 && (
+          <button 
+            onClick={() => handleDownload(photos[selectedImageIndex].url)}
+            className="mb-2"
+          >
+            <DownloadIcon />
+          </button>
+        )}
         {photos.length > 0 ? (
-          photos?.[selectedImageIndex]?.isVideo ? (
+          photos[selectedImageIndex]?.isVideo ? (
             <video
-              src={photos?.[selectedImageIndex]?.downloadUrl}
+              src={photos[selectedImageIndex].downloadUrl}
               className="w-full h-full object-cover"
               controls
               playsInline
             />
           ) : (
             <img
-              src={photos?.[selectedImageIndex]?.downloadUrl}
+              src={photos[selectedImageIndex].downloadUrl}
               alt="Selected preview"
               className="w-full h-full object-contain rounded-lg"
             />
@@ -66,8 +103,7 @@ const ImageGallery = ({
           <div
             key={index}
             className={`relative min-w-[120px] h-[120px] rounded-lg overflow-hidden cursor-pointer border-2 group
-        ${selectedImageIndex === index ? "border-gray-500" : "border-gray-200"
-              }`}
+              ${selectedImageIndex === index ? "border-gray-500" : "border-gray-200"}`}
             onClick={() => setSelectedImageIndex(index)}
           >
             {image.isVideo ? (
@@ -86,14 +122,7 @@ const ImageGallery = ({
               className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600"
               onClick={(e) => {
                 e.stopPropagation();
-                setFormData((prev) => ({
-                  ...prev,
-                  photos: prev.photos.map((photo) =>
-                    photo.downloadUrl === image.downloadUrl
-                      ? { ...photo, isDeleted: true }
-                      : photo
-                  ),
-                }));
+                handleDelete(image.url, index);
               }}
             >
               <DeleteIcon />

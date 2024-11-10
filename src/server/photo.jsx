@@ -12,9 +12,9 @@ export const setAllPhoto = async (props) => {
   
   if (userDoc.exists()) {
     const userData = userDoc.data();
-    const photoData = userData.skus
-      .flatMap((sku) =>
-        sku.photos.map((photo) => {
+    const photoData = Object.entries(userData.skus)
+      .flatMap(([skuId, skuData]) =>
+        skuData.photos.map((photo) => {
           if (galleryphoto) {
             if (photo.isDeleted) return null;
           } else {
@@ -23,15 +23,15 @@ export const setAllPhoto = async (props) => {
           return {
             url: photo.url,
             date: photo.date,
-            sku: sku.sku,
-            title: sku.title,
-            description: sku.description,
-            quantity: sku.quantity,
-            price: sku.price,
-            type: sku.type,
+            sku: skuId,
+            title: skuData.title,
+            description: skuData.description,
+            quantity: skuData.quantity,
+            price: skuData.price,
+            type: skuData.type,
             isVideo: isVideo(photo.url),
             isFavorite: photo.isFavorite,
-            allSearch: `${sku.sku} ${photo.title}`.toLowerCase(),
+            allSearch: `${skuId} ${photo.title}`.toLowerCase(),
           };
         })
       )
@@ -74,16 +74,23 @@ export const deletePhoto = async (props) => {
     const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      const updatedSkus = userData.skus.map((sku) => ({
-        ...sku,
-        photos: sku.photos.map((photo) => ({
-          ...photo,
-          isDeleted: isrecycle ? (urls.includes(photo.url) ? false : photo.isDeleted) : (urls.includes(photo.url) ? true : photo.isDeleted)
-        })),
-      }));
+      const updatedSkus = {};
+      
+      Object.entries(userData.skus).forEach(([skuId, skuData]) => {
+        updatedSkus[skuId] = {
+          ...skuData,
+          photos: skuData.photos.map((photo) => ({
+            ...photo,
+            isDeleted: isrecycle ? 
+              (urls.includes(photo.url) ? false : photo.isDeleted) : 
+              (urls.includes(photo.url) ? true : photo.isDeleted)
+          })),
+        };
+      });
+
       await updateDoc(userDocRef, {
         skus: updatedSkus,
-      })
+      });
     }
   } catch (error) {
     console.error("Error deleting photos:", error);
@@ -92,7 +99,6 @@ export const deletePhoto = async (props) => {
 
 export const setFavorite = async (props) => {
   const { urls, currentUseruid, firestore, handleShowPhoto } = props;
-
   if (!urls || urls.length === 0) return;
 
   const userDocRef = doc(firestore, "Users", currentUseruid);
@@ -100,13 +106,17 @@ export const setFavorite = async (props) => {
     const userDoc = await getDoc(userDocRef);
     if (userDoc.exists()) {
       const userData = userDoc.data();
-      const updatedSkus = userData.skus.map((sku) => ({
-        ...sku,
-        photos: sku.photos.map((photo) => ({
-          ...photo,
-          isFavorite: urls.includes(photo.url) ? !photo.isFavorite : photo.isFavorite,
-        })),
-      }));
+      const updatedSkus = {};
+
+      Object.entries(userData.skus).forEach(([skuId, skuData]) => {
+        updatedSkus[skuId] = {
+          ...skuData,
+          photos: skuData.photos.map((photo) => ({
+            ...photo,
+            isFavorite: urls.includes(photo.url) ? !photo.isFavorite : photo.isFavorite,
+          })),
+        };
+      });
 
       await updateDoc(userDocRef, {
         skus: updatedSkus,
@@ -117,11 +127,7 @@ export const setFavorite = async (props) => {
   } catch (error) {
     console.error("Error favorite photos:", error);
   }
-}
-
-
-
-
+};
 
 export const showsku = async (props) => {
   const { currentUseruid, firestore, storage } = props;
@@ -130,32 +136,38 @@ export const showsku = async (props) => {
 
   if (userDoc.exists()) {
     const userData = userDoc.data();
-    const skus = userData.skus;
-    const photos = await Promise.all(skus.map(async (sku) => {
-      const activePhotos = await Promise.all(
-        sku.photos
-          .filter(photo => !photo.isDeleted)
-          .map(async (photo) => {
-            const photoRef = ref(storage, photo.url);
-            const downloadUrl = await getDownloadURL(photoRef);
-            return {
-              ...photo,
-              downloadUrl
-            };
-          })
-      );
-      return {
-        ...sku,
-        photos: activePhotos,
-        isVideo: isVideo(activePhotos?.[0]?.url || ""),
-        allSearch: `${sku.sku} ${sku.title}`.toLowerCase(),
-      };
-    }));
-    return photos.filter(photo => photo.photos.length > 0);
-  }
-  return [];
-}
+    const updatedSkus = {};
 
+    // Process each SKU
+    for (const [skuId, skuData] of Object.entries(userData.skus)) {
+      // Get active photos with download URLs
+      const activePhotos = [];
+      for (const photo of skuData.photos) {
+        if (!photo.isDeleted) {
+          const photoRef = ref(storage, photo.url);
+          const downloadUrl = await getDownloadURL(photoRef);
+          activePhotos.push({
+            ...photo,
+            downloadUrl
+          });
+        }
+      }
+
+      // Only include SKUs with active photos
+      if (activePhotos.length > 0) {
+        updatedSkus[skuId] = {
+          ...skuData,
+          photos: activePhotos,
+          isVideo: isVideo(activePhotos[0]?.url || ""),
+          allSearch: `${skuId} ${skuData.title}`.toLowerCase(),
+        };
+      }
+    }
+
+    return updatedSkus;
+  }
+  return {};
+};
 
 export const usedata = async (props) => {
   const { currentUseruid, firestore } = props;
