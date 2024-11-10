@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { storage, firestore } from "../../context/auth/connection/connection";
 import { useAuth } from "../../context/auth/AuthContext";
 import ProductCard from "../../components/ProductCard";
-import { Button, Checkbox, Toast } from "flowbite-react";
+import { Button, Checkbox, Toast, Pagination } from "flowbite-react";
 import Loader from "../../components/Loader";
 import SearchInput from "../../components/SearchInput";
 import { setAllPhoto, deletePhoto, permentDelete } from "../../server";
@@ -25,6 +25,9 @@ const Recycle = () => {
   const { currentUseruid } = useAuth();
   const galleryphoto = false;
   const isrecycle = true;
+  const [itemsPerPage] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPhotos, setTotalPhotos] = useState(0);
 
   useEffect(() => {
     let filtered = photo;
@@ -49,23 +52,33 @@ const Recycle = () => {
     handleShowPhoto();
   }, []);
 
-  const handleShowPhoto = async () => {
-    if (photo.length < 0) {
-      setLoading(true);
-    }
-
+  const handleShowPhoto = async (pageNum = 1) => {
+    setLoading(true);
     try {
-      const allphotos = await setAllPhoto({
+      const result = await setAllPhoto({
         currentUseruid,
         firestore,
         storage,
         galleryphoto,
+        page: pageNum,
+        limit: itemsPerPage,
       });
-      setPhoto(allphotos);
+      setPhoto(result.photos);
+      setTotalPhotos(result.totalPhotos);
     } catch (error) {
       console.error("Error fetching photos:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+    handleShowPhoto(page);
+    // Scroll to top when changing pages
+    const scrollContainer = document.querySelector('.overflow-y-auto');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = 0;
     }
   };
 
@@ -169,7 +182,7 @@ const Recycle = () => {
       </div>
       <div
         className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
-        style={{ height: "calc(100vh - 120px)" }}
+        style={{ height: "calc(100vh - 160px)" }}
       >
         {filteredPhoto.length > 0 ? (
           filteredPhoto.map((photoUrl, index) => (
@@ -182,10 +195,21 @@ const Recycle = () => {
               handleRecycle={() => handleRecycle([photoUrl.url])}
             />
           ))
-        ) :!loading && (
-          (<p className="text-center text-gray-500 text-sm">No photos found</p>)
-      )}
+        ) : !loading && (
+          <p className="text-center text-gray-500 text-sm">No photos found</p>
+        )}
       </div>
+
+      {totalPhotos > itemsPerPage && (
+        <div className="flex justify-center items-center py-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalPhotos / itemsPerPage)}
+            onPageChange={onPageChange}
+            showIcons={true}
+          />
+        </div>
+      )}
 
       <Selectaction
         selectedItems={selectedItems}

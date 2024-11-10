@@ -39,18 +39,24 @@ const TableView = (props) => {
 
     return [...filteredPhoto].sort((a, b) => {
       if (sortField === "quantity" || sortField === "price") {
-        const aValue = Number(a[sortField] || 0);
-        const bValue = Number(b[sortField] || 0);
+        const aValue = parseFloat(a[sortField]) || 0;
+        const bValue = parseFloat(b[sortField]) || 0;
 
         return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
 
-      const aValue = a[sortField] || "";
-      const bValue = b[sortField] || "";
+      const aValue = (a[sortField] || "").toString().toLowerCase();
+      const bValue = (b[sortField] || "").toString().toLowerCase();
 
-      return sortDirection === "asc"
-        ? aValue.toString().localeCompare(bValue.toString())
-        : bValue.toString().localeCompare(aValue.toString());
+      if (sortDirection === "asc") {
+        if (aValue < bValue) return -1;
+        if (aValue > bValue) return 1;
+        return 0;
+      }
+      
+      if (aValue > bValue) return -1;
+      if (aValue < bValue) return 1;
+      return 0;
     });
   };
 
@@ -179,7 +185,7 @@ const TableView = (props) => {
                     <Button
                       size="sm"
                       color="failure"
-                      onClick={() => handleDelete([item.photos[0].url])}
+                      onClick={() => handleDelete(item.photos[0].url)}
                     >
                       <DeleteIcon className="w-4 h-4" />
                     </Button>

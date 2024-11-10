@@ -6,22 +6,19 @@ import JSZip from 'jszip';
 
 
 export const setAllPhoto = async (props) => {
-  const { currentUseruid, firestore, storage, galleryphoto } = props;
+  const { currentUseruid, firestore, storage, galleryphoto, page = 1, limit = 20 } = props;
   const userDocRef = doc(firestore, "Users", currentUseruid);
   const userDoc = await getDoc(userDocRef);
+  
   if (userDoc.exists()) {
     const userData = userDoc.data();
     const photoData = userData.skus
       .flatMap((sku) =>
         sku.photos.map((photo) => {
           if (galleryphoto) {
-            if (photo.isDeleted) {
-              return null;
-            }
+            if (photo.isDeleted) return null;
           } else {
-            if (!photo.isDeleted) {
-              return null;
-            }
+            if (!photo.isDeleted) return null;
           }
           return {
             url: photo.url,
@@ -40,8 +37,15 @@ export const setAllPhoto = async (props) => {
       )
       .filter((photo) => photo !== null);
 
+    // Calculate pagination
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedData = photoData.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(photoData.length / limit);
+
+    // Get download URLs only for the current page
     const photosWithUrls = await Promise.all(
-      photoData.map(async (photo) => {
+      paginatedData.map(async (photo) => {
         const storageRef = ref(storage, photo.url);
         const downloadUrl = await getDownloadURL(storageRef);
         return {
@@ -51,7 +55,13 @@ export const setAllPhoto = async (props) => {
       })
     );
 
-    return photosWithUrls;
+    return {
+      photos: photosWithUrls,
+      totalPhotos: photoData.length,
+      currentPage: page,
+      totalPages,
+      hasMore: page < totalPages
+    };
   }
 };
 
