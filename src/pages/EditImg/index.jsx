@@ -7,11 +7,13 @@ import { firestore, storage } from "../../context/auth/connection/connection";
 import ImageEditor from "./ImageEditor";
 import { ref, uploadBytes } from "firebase/storage";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import Loader from "../../components/Loader";
 
 const EditImg = () => {
   const { id, imgId } = useParams();
   const [imageData, setImageData] = useState(null);
   const { currentUseruid } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const getImage = async () => {
     try {
@@ -34,21 +36,25 @@ const EditImg = () => {
   }, []);
 
   const handleSave = async (editedImage) => {
+    setIsLoading(true);
     try {
       const response = await fetch(editedImage);
       const blob = await response.blob();
+      const originalPath = imageData.img.URL;
+      const pathParts = originalPath.split('/');
+      const originalFileName = pathParts.pop();
+      const newFileName = `${originalFileName.split('.')[0]}_edited_${new Date().getTime()}.jpg`;
+      pathParts.push(newFileName);
+      const newPath = pathParts.join('/');
 
-      const fileName = `${imageData.img.URL.split("/").pop().split(".")[0]}_edited_${new Date().getTime()}`;
-      console.log(fileName)
-      const userFolder = `users/${currentUseruid}/batches/${id.slice(0, -2)}/${id}/${fileName}.jpg`;
-      const storageRef = ref(storage, userFolder);
+      const storageRef = ref(storage, newPath);
 
       await uploadBytes(storageRef, blob);
 
       const userRef = doc(firestore, "Users", currentUseruid);
       const userDoc = await getDoc(userRef);
       const newPhoto = {
-        url: userFolder,
+        url: newPath,
         date: new Date().toISOString(),
         isDeleted: false,
         isFavorite: false,
@@ -60,13 +66,13 @@ const EditImg = () => {
       if (userDoc.exists()) {
         const userData = userDoc.data();
         const updatedSkus = { ...userData.skus };
-        
+
         if (updatedSkus[id]) {
           updatedSkus[id] = {
             ...updatedSkus[id],
             photos: [...updatedSkus[id].photos, newPhoto],
           };
-          
+
           await updateDoc(userRef, {
             skus: updatedSkus,
           });
@@ -75,13 +81,21 @@ const EditImg = () => {
       window.history.back();
     } catch (error) {
       console.error("Error in handleSave:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div>
-      {imageData && (
-        <ImageEditor imageUrl={imageData.img.url} onSave={handleSave} />
+      {isLoading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Loader size="xl" />
+        </div>
+      ) : (
+        imageData && (
+          <ImageEditor imageUrl={imageData.img.url} onSave={handleSave} />
+        )
       )}
     </div>
   );

@@ -14,7 +14,7 @@ export const setAllPhoto = async (props) => {
     const userData = userDoc.data();
     const photoData = Object.entries(userData.skus)
       .flatMap(([skuId, skuData]) =>
-        skuData.photos.map((photo) => {
+        (skuData.photos || []).map((photo) => {
           if (galleryphoto) {
             if (photo.isDeleted) return null;
           } else {
@@ -93,7 +93,7 @@ export const deletePhoto = async (props) => {
       });
     }
   } catch (error) {
-    console.error("Error deleting photos:", error);
+      console.error("Error deleting photos:", error);
   }
 };
 
@@ -134,39 +134,44 @@ export const showsku = async (props) => {
   const userDocRef = doc(firestore, "Users", currentUseruid);
   const userDoc = await getDoc(userDocRef);
 
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    const updatedSkus = {};
+  if (!userDoc.exists()) return {};
 
-    // Process each SKU
-    for (const [skuId, skuData] of Object.entries(userData.skus)) {
-      // Get active photos with download URLs
-      const activePhotos = [];
-      for (const photo of skuData.photos) {
-        if (!photo.isDeleted) {
-          const photoRef = ref(storage, photo.url);
-          const downloadUrl = await getDownloadURL(photoRef);
-          activePhotos.push({
-            ...photo,
-            downloadUrl
-          });
-        }
-      }
+  const userData = userDoc.data();
+  
+  // Process all SKUs in parallel
+  const skuEntries = await Promise.all(
+    Object.entries(userData.skus).map(async ([skuId, skuData]) => {
+      // Skip if photos is undefined or empty
+      if (!skuData.photos || !Array.isArray(skuData.photos)) return null;
 
-      // Only include SKUs with active photos
-      if (activePhotos.length > 0) {
-        updatedSkus[skuId] = {
+      // Process all photos in parallel
+      const activePhotos = await Promise.all(
+        skuData.photos
+          .filter(photo => !photo.isDeleted)
+          .map(async (photo) => {
+            const photoRef = ref(storage, photo.url);
+            const downloadUrl = await getDownloadURL(photoRef);
+            return { ...photo, downloadUrl };
+          })
+      );
+
+      // Skip if no active photos
+      if (activePhotos.length === 0) return null;
+
+      return [
+        skuId,
+        {
           ...skuData,
           photos: activePhotos,
           isVideo: isVideo(activePhotos[0]?.url || ""),
           allSearch: `${skuId} ${skuData.title}`.toLowerCase(),
-        };
-      }
-    }
+        }
+      ];
+    })
+  );
 
-    return updatedSkus;
-  }
-  return {};
+  // Convert array back to object, filtering out null entries
+  return Object.fromEntries(skuEntries.filter(entry => entry !== null));
 };
 
 export const usedata = async (props) => {
