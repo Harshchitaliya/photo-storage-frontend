@@ -12,6 +12,16 @@ export const setAllPhoto = async (props) => {
   
   if (userDoc.exists()) {
     const userData = userDoc.data();
+    if (!userData.skus) {
+      return {
+        photos: [],
+        totalPhotos: 0,
+        currentPage: page,
+        totalPages: 0,
+        hasMore: false
+      };
+    }
+    
     const photoData = Object.entries(userData.skus)
       .flatMap(([skuId, skuData]) =>
         (skuData.photos || []).map((photo) => {
@@ -138,6 +148,9 @@ export const showsku = async (props) => {
 
   const userData = userDoc.data();
   
+  // Add check for userData.skus
+  if (!userData.skus) return {};
+
   // Process all SKUs in parallel
   const skuEntries = await Promise.all(
     Object.entries(userData.skus).map(async ([skuId, skuData]) => {
