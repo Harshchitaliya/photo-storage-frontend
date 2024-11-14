@@ -73,7 +73,7 @@ function Catalog() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen">
       {/* Sidebar */}
       <div className="w-80 bg-white dark:bg-gray-800 p-4 shadow-lg overflow-y-auto">
         {/* Back Button and Title */}
