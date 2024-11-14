@@ -19,7 +19,7 @@ const buttonList = [
   { type: "grid", icon: <GridIcon /> },
 ];
 const Product = () => {
-  const [photo, setPhoto] = useState([]);
+  const [photo, setPhoto] = useState({});
   const [loading, setLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [allFilter, setAllFilter] = useState({});
@@ -29,9 +29,16 @@ const Product = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let filtered = photo;
+    let filtered = [];
+    const photoArray = Object.entries(photo).map(([skuId, data]) => ({
+      ...data,
+      sku: skuId
+    }));
+
+    filtered = photoArray;
+
     if (allFilter.search) {
-      filtered = photo.filter((item) =>
+      filtered = filtered.filter((item) =>
         item.allSearch.includes(allFilter.search)
       );
     }
@@ -54,8 +61,6 @@ const Product = () => {
   }, [allFilter, photo]);
 
   const { currentUseruid } = useAuth();
-
- 
 
   useEffect(() => {
     handleShowPhoto();
@@ -151,7 +156,6 @@ const Product = () => {
     };
   }, [photo]);
 
-
   const handleShare = (url) => {
     console.log(url);
   };
@@ -205,33 +209,38 @@ const Product = () => {
         className="flex flex-wrap justify-center items-center gap-6 mt-3 overflow-y-auto"
         style={{ height: "calc(100vh - 120px)" }}
       >
-        {filteredPhoto.length > 0 ? (viewType === "table" && (
-          <TableView
-            filteredPhoto={filteredPhoto}
-            selectedItems={selectedItems}
-            handleSelectAll={handleSelectAll}
-            handleDownload={handleDownload}
-            handleDelete={handleDelete}
-            loading={loading}
-            setSelectedItems={setSelectedItems}
-          />
-        )) : !loading && (
-          (<p className="text-center text-gray-500 text-sm">No photos found</p>)
+        {filteredPhoto.length > 0 ? (
+          viewType === "table" && (
+            <TableView
+              filteredPhoto={filteredPhoto}
+              selectedItems={selectedItems}
+              handleSelectAll={handleSelectAll}
+              handleDownload={handleDownload}
+              handleDelete={handleDelete}
+              loading={loading}
+              setSelectedItems={setSelectedItems}
+            />
+          )
+        ) : (
+          !loading && (
+            <p className="text-center text-gray-500 text-sm">No photos found</p>
+          )
         )}
 
         {viewType === "grid" &&
-          filteredPhoto.map((photoUrl, index) => (
+          filteredPhoto.map((item, index) => (
             <ProductCard
-              photoUrl={photoUrl}
+              photoUrl={item}
               key={index}
               checkboxClick={setSelectedItems}
               checked={selectedItems}
-              handleDelete={() => handleDelete([photoUrl.sku])}
-              setDrawerOpen={()=>navigate(`/products/${photoUrl?.sku}/edit`)}
+              handleDelete={() => handleDelete([item.sku])}
+              setDrawerOpen={() => navigate(`/products/${item.sku}/edit`)}
               type={"product"}
             />
           ))}
       </div>
+
       <Selectaction
         selectedItems={selectedItems}
         handleCancel={() => setSelectedItems([])}

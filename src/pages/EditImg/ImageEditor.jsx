@@ -307,6 +307,19 @@ const ImageEditor = ({ imageUrl, onSave }) => {
     ];
 
     const getImageDataUri = async (url) => {
+        // If the URL is a blob URL, handle it directly
+        if (url.startsWith('blob:')) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+        
+        // Otherwise, fetch through the server
         const response = await fetch(`http://localhost:5001/fetch-image?url=${encodeURIComponent(url)}`);
         const blob = await response.blob();
         return new Promise((resolve, reject) => {
@@ -319,7 +332,8 @@ const ImageEditor = ({ imageUrl, onSave }) => {
 
     const captureEditedImage = async () => {
         try {
-            const dataUri = await getImageDataUri(imageUrl);
+            const sourceUrl = bgRemovedImage || imageUrl;
+            const dataUri = await getImageDataUri(sourceUrl);
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const img = new Image();

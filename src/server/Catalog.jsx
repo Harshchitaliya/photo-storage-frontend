@@ -46,13 +46,13 @@ export const getCatalog = async ({ currentUseruid, firestore }) => {
 
   const userData = userDoc.data();
   const catalogs = userData.catalogs ?? [];
-  const userSkus = userData.skus ?? [];
+  const userSkus = userData.skus ?? {};
   
   return catalogs.map(catalog => ({
     ...catalog,
     skus: (catalog.skus ?? [])
       .reduce((acc, skuId) => {
-        const sku = userSkus.find(s => s.sku === skuId);
+        const sku = userSkus[skuId];
         if (sku) {
           const validPhotos = sku.photos.filter(photo => !photo.isDeleted);
           if (validPhotos.length > 0) {

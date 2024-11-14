@@ -29,6 +29,8 @@ const ImageGallery = ({
     }
   };
 
+  
+
   return (
     <div className="w-full">
       {loading && (
@@ -82,14 +84,15 @@ const ImageGallery = ({
                 className="w-full h-full object-cover"
               />
             )}
-            <button
+            {/* <button
               className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600"
               onClick={(e) => {
                 e.stopPropagation();
                 setFormData((prev) => ({
+                  
                   ...prev,
                   photos: prev.photos.map((photo) =>
-                    photo.downloadUrl === image.downloadUrl
+                    photo.url === image.url
                       ? { ...photo, isDeleted: true }
                       : photo
                   ),
@@ -97,7 +100,7 @@ const ImageGallery = ({
               }}
             >
               <DeleteIcon />
-            </button>
+            </button> */}
           </div>
         ))}
       </div>

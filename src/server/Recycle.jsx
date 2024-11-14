@@ -22,13 +22,22 @@ export const permentDelete = async (props) => {
   const userDoc = await getDoc(userDocRef);
   if (userDoc.exists()) {
     const userData = userDoc.data();
-    const updatedSkus = userData.skus
-      .map((sku) => ({
-        ...sku,
-        photos: sku.photos.filter((photo) => !urls.includes(photo.url)),
-      }))
-      // Remove SKUs that have no photos
-      .filter((sku) => sku.photos.length > 0);
+    const updatedSkus = {};
+    
+    // Iterate through SKU objects
+    Object.entries(userData.skus).forEach(([skuId, skuData]) => {
+      const filteredPhotos = skuData.photos.filter(
+        (photo) => !urls.includes(photo.url)
+      );
+      
+      // Only keep SKUs that have remaining photos
+      if (filteredPhotos.length > 0) {
+        updatedSkus[skuId] = {
+          ...skuData,
+          photos: filteredPhotos,
+        };
+      }
+    });
 
     await updateDoc(userDocRef, {
       skus: updatedSkus,
